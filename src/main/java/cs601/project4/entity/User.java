@@ -18,6 +18,13 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    public User(String username, String password, String email, String phoneNumber) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
     public Long getId() {
         return id;
     }
