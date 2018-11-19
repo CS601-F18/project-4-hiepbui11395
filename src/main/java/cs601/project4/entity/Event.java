@@ -8,16 +8,18 @@ public class Event {
     private String description;
     private String location;
     private Date date;
+    private boolean active;
 
     public Event() {
     }
 
-    public Event(Long id, String name, String description, String location, Date date) {
+    public Event(Long id, String name, String description, String location, Date date, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.location = location;
         this.date = date;
+        this.active = active;
     }
 
     public Long getId() {
@@ -58,5 +60,13 @@ public class Event {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -10,24 +10,27 @@ public class User {
     private String salt;
     private String email;
     private String phoneNumber;
+    private boolean active;
 
     public User() {
     }
 
-    public User(Long id, String username, String password, String salt, String email, String phoneNumber) {
+    public User(Long id, String username, String password, String salt, String email, String phoneNumber, boolean active) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.salt = salt;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.active = active;
     }
 
-    public User(String username, String password, String email, String phoneNumber) {
+    public User(String username, String password, String email, String phoneNumber, boolean active) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
+        this.active = active;
     }
 
     public User(ResultSet rs) throws SQLException {
@@ -85,5 +88,13 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

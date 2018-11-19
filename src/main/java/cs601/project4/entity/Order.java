@@ -8,16 +8,18 @@ public class Order {
     private long eventId;
     private float total;
     private Date date;
+    private int status;
 
     public Order() {
     }
 
-    public Order(Long id, long userId, long eventId, float total, Date date) {
+    public Order(Long id, long userId, long eventId, float total, Date date, int status) {
         this.id = id;
         this.userId = userId;
         this.eventId = eventId;
         this.total = total;
         this.date = date;
+        this.status = status;
     }
 
     public Long getId() {
@@ -58,5 +60,13 @@ public class Order {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

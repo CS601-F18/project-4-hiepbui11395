@@ -27,11 +27,12 @@ public class UserRepository {
         return instance;
     }
 
-    private final String SQL_INSERT = "insert into `user` (`username`,`password`,`salt`,`email`,`phoneNumber`)" +
-            "values (?,?,?,?,?)";
+    private final String SQL_INSERT = "insert into `user` (`name`,`description`,`location`,`date`,`phoneNumber`,`active`)" +
+            "values (?,?,?,?,?,?)";
 
     public long save(User entity) throws SQLException{
 //                Connection connection = ConnectionUtil.getInstance();
+        //TODO: Check user id to know it is add or update
         PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
                 PreparedStatement.RETURN_GENERATED_KEYS);
         statement.setString(1, entity.getUsername());
@@ -39,6 +40,7 @@ public class UserRepository {
         statement.setString(3, entity.getSalt());
         statement.setString(4, entity.getEmail());
         statement.setString(5, entity.getPhoneNumber());
+        statement.setBoolean(6, true);
         int affectedRow = statement.executeUpdate();
         if(affectedRow == 0){
             throw new SQLException("Creating user failed - no row affected");

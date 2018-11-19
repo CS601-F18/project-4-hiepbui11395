@@ -9,8 +9,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.text.SimpleDateFormat;
 
 public class Utils {
+    public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Config.getInstance().getProperty("dateFormat"));
+
     public static String generateSalt(){
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
