@@ -14,8 +14,8 @@ You *must* complete all of the following required features for a total of 55 poi
 
 | Points   | Feature         | Description |
 | :-------: |:-------------:| :-----|
-| 5[] | User registration | Provide a *Sign Up* button that allows a user to register to use your site. Users must be able to enter appropriate account information and user data must be saved appropriately in your system. Passwords must be salted and hashed before saving to the database. | 
-| 5[] | Login and logout | Allow a user to login and logout of your site. Maintain the user session appropriately. |
+| 5[x] | User registration | Provide a *Sign Up* button that allows a user to register to use your site. Users must be able to enter appropriate account information and user data must be saved appropriately in your system. Passwords must be salted and hashed before saving to the database. | 
+| 5[x] | Login and logout | Allow a user to login and logout of your site. Maintain the user session appropriately. |
 | 5[] | View user information | Display user account information including *details* for all events for which the user has purchased tickets. |
 | 5[] | View events | Display a list of all events. |
 | 5[] | View event | Display details for a specific event. |

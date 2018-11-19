@@ -30,7 +30,6 @@ public class TicketPurchaseApplication {
         context.setResourceBase("src/main/webapp");
         context.setContextPath("/");
         context.setDescriptor("webapp/WEB-INF/web.xml");
-//        context.setBaseResource(Resource.newResource("src/main/webapp"));
         context.setConfigurations(new Configuration[]
                 {
                         new AnnotationConfiguration(),
@@ -42,6 +41,7 @@ public class TicketPurchaseApplication {
                         new PlusConfiguration(),
                         new JettyWebXmlConfiguration()
                 });
+        //Find annotation
         context.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",".*/classes/.*");
         context.setParentLoaderPriority(true);
 
