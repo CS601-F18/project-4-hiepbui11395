@@ -19,7 +19,7 @@ You *must* complete all of the following required features for a total of 55 poi
 | 5[] | View user information | Display user account information including *details* for all events for which the user has purchased tickets. |
 | 5[] | View events | Display a list of all events. |
 | 5[] | View event | Display details for a specific event. |
-| 5[] | Create event | Allow the user to create a new event by entering all appropriate detail. |
+| 5[x] | Create event | Allow the user to create a new event by entering all appropriate detail. |
 | 5[] | Purchase tickets | Allow the user to purchase tickets for an event. |
 | 5[] | Transfer tickets | Allow the user to transfer tickets to another user. |
 | 5[] | Relational database - Users | Use a relational database to store *user account* data. |
@@ -27,6 +27,11 @@ You *must* complete all of the following required features for a total of 55 poi
 | 5[] | Deployment | Your solution must be deployed on the microcloud on your [primary node](https://github.com/CS601-F18/notes/blob/master/admin/mcassignments.md) port **7070** prior to your interactive grading appointment. |
 
 You may use additional database tables.
+
+### My Task
+[x] Make JDBC util
+[x] Make login filter to check the session that is login or not
+[x] Close connection when finish execute statement
 
 ### Additional Features
 

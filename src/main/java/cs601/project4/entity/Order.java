@@ -1,5 +1,6 @@
 package cs601.project4.entity;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Order {
@@ -7,13 +8,13 @@ public class Order {
     private long userId;
     private long eventId;
     private float total;
-    private Date date;
+    private LocalDate date;
     private int status;
 
     public Order() {
     }
 
-    public Order(Long id, long userId, long eventId, float total, Date date, int status) {
+    public Order(Long id, long userId, long eventId, float total, LocalDate date, int status) {
         this.id = id;
         this.userId = userId;
         this.eventId = eventId;
@@ -54,11 +55,11 @@ public class Order {
         this.total = total;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

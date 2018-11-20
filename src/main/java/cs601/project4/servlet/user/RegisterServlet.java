@@ -28,8 +28,8 @@ public class RegisterServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
         String email = req.getParameter("email");
-        Map<String, String> messages = new HashMap<String, String>();
         String phoneNumber = req.getParameter("phoneNumber");
+        Map<String, String> messages = new HashMap<String, String>();
         //Check if username/email exist
         User user = userService.findUserByUsername(username);
         if(user!=null){
@@ -41,7 +41,6 @@ public class RegisterServlet extends HttpServlet {
         }
         if(messages.isEmpty()){
             user = new User(username, password, email, phoneNumber);
-            System.out.print(user.getUsername());
             userService.addUser(user);
             resp.sendRedirect(req.getContextPath() + "/login");
         } else{

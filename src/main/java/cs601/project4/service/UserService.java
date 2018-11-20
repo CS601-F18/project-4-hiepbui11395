@@ -10,14 +10,13 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 
 public class UserService {
-    private UserRepository userRepository;
+    private UserRepository userRepository = UserRepository.getInstance();
     private static UserService instance;
     private UserService(){}
 
     public static synchronized UserService getInstance() {
         if(instance == null){
             instance = new UserService();
-            instance.userRepository =  UserRepository.getInstance();
         }
         return instance;
     }

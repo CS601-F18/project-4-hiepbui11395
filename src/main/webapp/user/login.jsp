@@ -11,7 +11,7 @@
         <c:if test="${messages.containsKey('username')}">
             <c:out value="${messages['username']}"/><br/>
         </c:if>
-        Password <input type="text" name="password"/><br/>
+        Password <input type="password" name="password"/><br/>
         <c:if test="${messages.containsKey('password')}">
             <c:out value="${messages['password']}"/><br/>
         </c:if>

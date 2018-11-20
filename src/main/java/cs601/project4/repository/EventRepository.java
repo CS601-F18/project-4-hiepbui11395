@@ -10,23 +10,40 @@ import java.sql.SQLException;
 
 public class EventRepository {
     private static EventRepository instance;
-    private Connection connection;
 
     public static synchronized EventRepository getInstace() {
         if(instance == null){
             instance = new EventRepository();
-            try {
-                instance.connection = ConnectionUtil.getInstance();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         return instance;
     }
-    private final String SQL_INSERT = "insert into `event` (`username`,`password`,`salt`,`email`,`phoneNumber`)" +
+    private final String SQL_INSERT = "insert into `event` (`name`,`description`,`location`,`date`,`active`)" +
             "values (?,?,?,?,?)";
 
     public long save(Event entity) throws SQLException{
-        return 0;
+        //TODO: Check event id to know it is add or update
+        Connection connection = ConnectionUtil.getMyConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
+                    PreparedStatement.RETURN_GENERATED_KEYS);
+            statement.setString(1, entity.getName());
+            statement.setString(2, entity.getDescription());
+            statement.setString(3, entity.getLocation());
+            statement.setObject(4, entity.getDate());
+            statement.setBoolean(5, true);
+            int affectedRow = statement.executeUpdate();
+            if (affectedRow == 0) {
+                throw new SQLException("Creating event failed - no row affected");
+            }
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                entity.setId(rs.getLong(1));
+            } else {
+                throw new SQLException("Creating event failed - no Id obtained");
+            }
+            return entity.getId();
+        } finally {
+            connection.close();
+        }
     }
 }

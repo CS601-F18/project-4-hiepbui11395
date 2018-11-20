@@ -1,5 +1,6 @@
 package cs601.project4.entity;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Event {
@@ -7,19 +8,26 @@ public class Event {
     private String name;
     private String description;
     private String location;
-    private Date date;
+    private LocalDate date;
     private boolean active;
 
     public Event() {
     }
 
-    public Event(Long id, String name, String description, String location, Date date, boolean active) {
+    public Event(Long id, String name, String description, String location, LocalDate date, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.location = location;
         this.date = date;
         this.active = active;
+    }
+
+    public Event(String name, String description, String location, LocalDate date) {
+        this.name = name;
+        this.description = description;
+        this.location = location;
+        this.date = date;
     }
 
     public Long getId() {
@@ -54,11 +62,11 @@ public class Event {
         this.location = location;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

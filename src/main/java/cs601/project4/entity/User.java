@@ -25,12 +25,11 @@ public class User {
         this.active = active;
     }
 
-    public User(String username, String password, String email, String phoneNumber, boolean active) {
+    public User(String username, String password, String email, String phoneNumber) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.active = active;
     }
 
     public User(ResultSet rs) throws SQLException {
