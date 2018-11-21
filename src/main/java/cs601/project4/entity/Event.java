@@ -1,5 +1,7 @@
 package cs601.project4.entity;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -28,6 +30,15 @@ public class Event {
         this.description = description;
         this.location = location;
         this.date = date;
+    }
+
+    public Event(ResultSet rs) throws SQLException {
+        this.id = rs.getLong("id");
+        this.name = rs.getString("name");
+        this.description = rs.getString("description");
+        this.location = rs.getString("location");
+        this.date = rs.getDate("date").toLocalDate();
+        this.active = rs.getBoolean("active");
     }
 
     public Long getId() {

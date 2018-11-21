@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet("/events/create")
-public class CreateEventServlet extends HttpServlet {
+public class CreateServlet extends HttpServlet {
     private EventService eventService = EventService.getInstance();
 
     @Override

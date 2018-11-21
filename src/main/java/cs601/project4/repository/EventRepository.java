@@ -46,4 +46,21 @@ public class EventRepository {
             connection.close();
         }
     }
+
+    public Event findById(long id) throws SQLException {
+        Connection connection = ConnectionUtil.getMyConnection();
+        try{
+            PreparedStatement statement = connection.prepareStatement("select * from `event` where `id` = ? limit 1");
+            statement.setLong(1,id);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                Event event = new Event(rs);
+                return event;
+            } else{
+                return null;
+            }
+        } finally {
+            connection.close();
+        }
+    }
 }

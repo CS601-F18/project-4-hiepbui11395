@@ -26,4 +26,14 @@ public class EventService {
         }
         return result;
     }
+
+    public Event findEventById(long id){
+        Event result = null;
+        try{
+            result = eventRepository.findById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }

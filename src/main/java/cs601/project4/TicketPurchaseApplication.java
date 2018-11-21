@@ -12,7 +12,7 @@ import java.net.URI;
 public class TicketPurchaseApplication {
     public static void main(String[] args) throws Exception{
 
-        Server server = new Server(8080);
+        Server server = new Server(8081);
 
         //Using WebAppContext and web.xml
 //        WebAppContext context = new WebAppContext();
