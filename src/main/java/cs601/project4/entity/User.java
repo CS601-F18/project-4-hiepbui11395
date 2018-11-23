@@ -7,22 +7,10 @@ public class User {
     private Long id;
     private String username;
     private String password;
-    private String salt;
     private String email;
     private String phoneNumber;
-    private boolean active;
 
     public User() {
-    }
-
-    public User(Long id, String username, String password, String salt, String email, String phoneNumber, boolean active) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.salt = salt;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.active = active;
     }
 
     public User(String username, String password, String email, String phoneNumber) {
@@ -36,7 +24,6 @@ public class User {
         this.id = rs.getLong("id");
         this.username = rs.getString("username");
         this.password = rs.getString("password");
-        this.salt = rs.getString("salt");
         this.email = rs.getString("email");
         this.phoneNumber = rs.getString("phoneNumber");
     }
@@ -65,14 +52,6 @@ public class User {
         this.password = password;
     }
 
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -89,11 +68,4 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 }

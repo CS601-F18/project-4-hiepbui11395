@@ -50,7 +50,7 @@ public class EventRepository {
     public Event findById(long id) throws SQLException {
         Connection connection = ConnectionUtil.getMyConnection();
         try{
-            PreparedStatement statement = connection.prepareStatement("select * from `event` where `id` = ? limit 1");
+            PreparedStatement statement = connection.prepareStatement("select * from `event` where `id` = ?");
             statement.setLong(1,id);
             ResultSet rs = statement.executeQuery();
             if(rs.next()){
