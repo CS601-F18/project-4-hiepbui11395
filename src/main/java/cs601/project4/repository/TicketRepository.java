@@ -13,7 +13,7 @@ import java.util.List;
 public class TicketRepository {
     private static TicketRepository instance;
 
-    private TicketRepository(){};
+    private TicketRepository(){}
 
     public static synchronized TicketRepository getInstance(){
         if(instance == null){
@@ -23,8 +23,9 @@ public class TicketRepository {
     }
 
     public List<Ticket> findTicketsByUserId(long userId) throws SQLException {
-        Connection connection = ConnectionUtil.getMyConnection();
-        try{
+
+        try(Connection connection = ConnectionUtil.getMyConnection())
+        {
             PreparedStatement statement = connection.prepareStatement(
                     "select * from `ticket` where `userId` = ?");
             statement.setLong(1,userId);
@@ -35,8 +36,6 @@ public class TicketRepository {
                 ticketList.add(ticket);
             }
             return ticketList;
-        } finally {
-            connection.close();
         }
     }
 }

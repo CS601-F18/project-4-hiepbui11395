@@ -2,7 +2,6 @@ package cs601.project4.service;
 
 import cs601.project4.entity.Event;
 import cs601.project4.repository.EventRepository;
-import cs601.project4.utils.Utils;
 
 import java.sql.SQLException;
 

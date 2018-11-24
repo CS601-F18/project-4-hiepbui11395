@@ -1,4 +1,4 @@
-package cs601.project4.servlet.user;
+package cs601.project4.servlet;
 
 import com.google.gson.JsonObject;
 import cs601.project4.entity.Ticket;
@@ -7,18 +7,16 @@ import cs601.project4.model.UserModel;
 import cs601.project4.service.TicketService;
 import cs601.project4.service.UserService;
 import cs601.project4.utils.Utils;
-import org.eclipse.jetty.http.HttpStatus;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.xml.transform.Result;
 import java.util.List;
 
 @Path("/")
 public class UserServlet {
-    UserService userService = UserService.getInstance();
-    TicketService ticketService = TicketService.getInstance();
+    private UserService userService = UserService.getInstance();
+    private TicketService ticketService = TicketService.getInstance();
 
     @POST
     @Path("create")

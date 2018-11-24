@@ -8,7 +8,8 @@ import org.eclipse.jetty.servlet.ServletHandler;
 public class EventServiceApplication {
     public static void main(String[] args) throws Exception{
 
-        Server server = new Server(Integer.parseInt(Config.getInstance().getProperty("eventPort")));
+        Server server = new Server(
+                Integer.parseInt(Config.getInstance().getProperty("eventPort")));
 
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
