@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet("/events/create")
 public class CreateServlet extends HttpServlet {
     private EventService eventService = EventService.getInstance();
 
@@ -59,7 +58,7 @@ public class CreateServlet extends HttpServlet {
             }
         }
         if(messages.isEmpty()){
-            Event event = new Event(name, description, location, date);
+            Event event = new Event();
             eventService.addEvent(event);
             resp.sendRedirect(req.getContextPath() + "/events");
         } else{

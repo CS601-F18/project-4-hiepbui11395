@@ -17,8 +17,8 @@ public class EventRepository {
         }
         return instance;
     }
-    private final String SQL_INSERT = "insert into `event` (`name`,`description`,`location`,`date`,`active`)" +
-            "values (?,?,?,?,?)";
+    private final String SQL_INSERT = "insert into `event` (`userId`,`name`,`numTickets`)" +
+            "values (?,?,?)";
 
     public long save(Event entity) throws SQLException{
         //TODO: Check event id to know it is add or update
@@ -26,11 +26,9 @@ public class EventRepository {
         try {
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
                     PreparedStatement.RETURN_GENERATED_KEYS);
-            statement.setString(1, entity.getName());
-            statement.setString(2, entity.getDescription());
-            statement.setString(3, entity.getLocation());
-            statement.setObject(4, entity.getDate());
-            statement.setBoolean(5, true);
+            statement.setLong(1, entity.getUserId());
+            statement.setString(2, entity.getName());
+            statement.setInt(3, entity.getNumTickets());
             int affectedRow = statement.executeUpdate();
             if (affectedRow == 0) {
                 throw new SQLException("Creating event failed - no row affected");

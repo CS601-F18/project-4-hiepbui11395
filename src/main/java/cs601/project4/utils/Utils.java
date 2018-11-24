@@ -1,10 +1,13 @@
 package cs601.project4.utils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.commons.codec.binary.Hex;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.io.UnsupportedEncodingException;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -34,5 +37,22 @@ public class Utils {
             e.printStackTrace();
         }
         return Hex.encodeHexString(hash);
+    }
+
+    public static void printJsonResult(PrintWriter pw, JsonObject result){
+        pw.print(result);
+        pw.flush();
+    }
+
+    public static JsonObject toJsonObject(BufferedReader br){
+        JsonParser parser = new JsonParser();
+        JsonObject result = parser.parse(br).getAsJsonObject();
+        return result;
+    }
+
+    public static JsonObject toJsonObject(String json){
+        JsonParser parser = new JsonParser();
+        JsonObject result = parser.parse(json).getAsJsonObject();
+        return result;
     }
 }

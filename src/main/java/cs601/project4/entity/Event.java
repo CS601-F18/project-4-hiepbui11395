@@ -7,30 +7,24 @@ import java.util.Date;
 
 public class Event {
     private Long id;
-    private long creatorId;
+    private long userId;
     private String name;
-    private String description;
-    private String location;
-    private LocalDate date;
+    private int numTickets;
 
     public Event() {
     }
 
-    public Event(long creatorId, String name, String description, String location, LocalDate date) {
-        this.creatorId = creatorId;
+    public Event(long userId, String name, int numticket) {
+        this.userId = userId;
         this.name = name;
-        this.description = description;
-        this.location = location;
-        this.date = date;
+        this.numTickets = numticket;
     }
 
     public Event(ResultSet rs) throws SQLException {
         this.id = rs.getLong("id");
-        this.creatorId = rs.getLong("creatorId");
+        this.userId = rs.getLong("userid");
         this.name = rs.getString("name");
-        this.description = rs.getString("description");
-        this.location = rs.getString("location");
-        this.date = rs.getDate("date").toLocalDate();
+        this.numTickets = rs.getInt("numtickets");
     }
 
     public Long getId() {
@@ -41,6 +35,14 @@ public class Event {
         this.id = id;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     public String getName() {
         return name;
     }
@@ -49,27 +51,11 @@ public class Event {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public int getNumTickets() {
+        return numTickets;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setNumTickets(int numTickets) {
+        this.numTickets = numTickets;
     }
 }
