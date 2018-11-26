@@ -10,6 +10,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 public class WebFrontEndServiceApplication {
     public static void main(String[] args) throws Exception{
+
         Server server = new Server(Integer.parseInt(Config.getInstance().getProperty("webFrontEndPort")));
 
         ServletContextHandler handler =

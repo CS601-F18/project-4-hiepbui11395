@@ -10,21 +10,24 @@ public class Event {
     private long userId;
     private String name;
     private int numTickets;
+    private int numTicketsAvail;
 
     public Event() {
     }
 
-    public Event(long userId, String name, int numticket) {
+    public Event(long userId, String name, int numTickets, int numTicketsAvail) {
         this.userId = userId;
         this.name = name;
-        this.numTickets = numticket;
+        this.numTickets = numTickets;
+        this.numTicketsAvail = numTicketsAvail;
     }
 
     public Event(ResultSet rs) throws SQLException {
         this.id = rs.getLong("id");
-        this.userId = rs.getLong("userid");
+        this.userId = rs.getLong("userId");
         this.name = rs.getString("name");
-        this.numTickets = rs.getInt("numtickets");
+        this.numTickets = rs.getInt("numTickets");
+        this.numTicketsAvail = rs.getInt("numTicketsAvail");
     }
 
     public Long getId() {
@@ -57,5 +60,13 @@ public class Event {
 
     public void setNumTickets(int numTickets) {
         this.numTickets = numTickets;
+    }
+
+    public int getNumTicketsAvail() {
+        return numTicketsAvail;
+    }
+
+    public void setNumTicketsAvail(int numTicketsAvail) {
+        this.numTicketsAvail = numTicketsAvail;
     }
 }

@@ -1,7 +1,10 @@
 package cs601.project4.service;
 
 import cs601.project4.entity.User;
+import cs601.project4.jdbc.ConnectionUtil;
 import cs601.project4.repository.UserRepository;
+
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class UserService {
@@ -17,32 +20,32 @@ public class UserService {
     }
 
     public Long create(User user){
-        Long result = null;
-        try {
-            result = userRepository.save(user);
+        try(Connection connection = ConnectionUtil.getMyConnection()) {
+            Long result = userRepository.createUser(user, connection);
+            return result;
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-        return result;
     }
 
     public User findUserById(long id){
-        User user = null;
-        try {
-            user = userRepository.findUserById(id);
+        try(Connection connection = ConnectionUtil.getMyConnection()) {
+            User user = userRepository.findUserById(id, connection);
+            return  user;
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-        return user;
     }
 
     public User findUserByUsername(String username){
-        User user = null;
-        try {
-            user = userRepository.findUserByUsername(username);
+        try(Connection connection = ConnectionUtil.getMyConnection()) {
+            User user = userRepository.findUserByUsername(username, connection);
+            return user;
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-        return user;
     }
 }

@@ -6,6 +6,7 @@ import cs601.project4.entity.User;
 import cs601.project4.model.UserModel;
 import cs601.project4.service.TicketService;
 import cs601.project4.service.UserService;
+import cs601.project4.utils.Config;
 import cs601.project4.utils.Utils;
 
 import javax.ws.rs.*;
@@ -17,13 +18,14 @@ import java.util.List;
 public class UserServlet {
     private UserService userService = UserService.getInstance();
     private TicketService ticketService = TicketService.getInstance();
+    private final String EVENT_SERVICE_URL = Config.getInstance().getProperty("eventUrl");
 
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(String request) {
-        JsonObject jsonObject = Utils.toJsonObject(request);
+    public Response create(String jsonRequesst) {
+        JsonObject jsonObject = Utils.toJsonObject(jsonRequesst);
         String username = jsonObject.get("username").getAsString();
         //Check if username/email exist
         User user = userService.findUserByUsername(username);
@@ -43,7 +45,7 @@ public class UserServlet {
     }
 
     @GET
-    @Path("/{id}/user")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserById(@PathParam("id") long id){
         User user = userService.findUserById(id);
@@ -54,5 +56,24 @@ public class UserServlet {
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         }
+    }
+
+    @POST
+    @Path("/{userid}/tickets/add")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addTicket(@PathParam("userid") long userId, String jsonRequest){
+        //Check userId valid
+        User user = userService.findUserById(userId);
+        if(user!=null){
+            JsonObject jsonObject = Utils.toJsonObject(jsonRequest);
+            long eventId = jsonObject.get("eventid").getAsLong();
+            int numTickets = jsonObject.get("tickets").getAsInt();
+
+            if(ticketService.addTicket(userId, eventId, numTickets)){
+                return Response.ok().build();
+            }
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }

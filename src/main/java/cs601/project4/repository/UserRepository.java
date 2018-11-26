@@ -23,33 +23,10 @@ public class UserRepository {
 
     private final String SQL_INSERT = "insert into `user` (`username`)" +
             "values (?)";
+    private final String SQL_UPDATE = "update `user` set `username`=? " +
+            "where `id`=?";
 
-    public Long save(User entity) throws SQLException{
-        //TODO: Check user id to know it is add or update
-        Connection connection = ConnectionUtil.getMyConnection();
-        try{
-            PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
-                    PreparedStatement.RETURN_GENERATED_KEYS);
-            statement.setString(1, entity.getUsername());
-            int affectedRow = statement.executeUpdate();
-            if(affectedRow == 0){
-                return null;
-            }
-            ResultSet rs = statement.getGeneratedKeys();
-            if(rs.next()){
-                entity.setId(rs.getLong(1));
-            } else{
-                return null;
-            }
-            return entity.getId();
-        } finally {
-            connection.close();
-        }
-    }
-
-    public User findUserById(long id) throws SQLException{
-        Connection connection = ConnectionUtil.getMyConnection();
-        try{
+    public User findUserById(long id, Connection connection) throws SQLException{
             PreparedStatement statement = connection.prepareStatement(
                     "select * from `user` where `id` = ?");
             statement.setLong(1,id);
@@ -60,14 +37,9 @@ public class UserRepository {
             } else{
                 return null;
             }
-        } finally {
-            connection.close();
-        }
     }
 
-    public User findUserByUsername(String username) throws SQLException{
-        Connection connection = ConnectionUtil.getMyConnection();
-        try{
+    public User findUserByUsername(String username, Connection connection) throws SQLException{
             PreparedStatement statement = connection.prepareStatement(
                     "select * from `user` where `username` = ?");
             statement.setString(1,username);
@@ -78,8 +50,35 @@ public class UserRepository {
             } else {
                 return null;
             }
-        } finally {
-            connection.close();
+    }
+
+    public Long createUser(User entity, Connection connection) throws SQLException{
+        PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
+                PreparedStatement.RETURN_GENERATED_KEYS);
+        statement.setString(1, entity.getUsername());
+
+        int affectedRow = statement.executeUpdate();
+        if(affectedRow == 0){
+            return null;
+        }
+        ResultSet rs = statement.getGeneratedKeys();
+        if(rs.next()){
+            return rs.getLong(1);
+        } else{
+            return null;
+        }
+    }
+
+    public User updateUser(User entity, Connection connection) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
+        statement.setString(1, entity.getUsername());
+        statement.setLong(2, entity.getId());
+
+        int affectedRow = statement.executeUpdate();
+        if(affectedRow != 0){
+            return entity;
+        } else{
+            return null;
         }
     }
 }

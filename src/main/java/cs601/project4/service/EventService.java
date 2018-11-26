@@ -1,8 +1,10 @@
 package cs601.project4.service;
 
 import cs601.project4.entity.Event;
+import cs601.project4.jdbc.ConnectionUtil;
 import cs601.project4.repository.EventRepository;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class EventService {
@@ -16,23 +18,36 @@ public class EventService {
         return instance;
     }
 
-    public Long addEvent(Event event){
-        Long result = null;
-        try {
-            result = eventRepository.save(event);
+    public Long create(Event event){
+        try(Connection connection = ConnectionUtil.getMyConnection()) {
+            Event result = eventRepository.create(event, connection);
+            return result.getId();
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-        return result;
     }
 
     public Event findEventById(long id){
-        Event result = null;
-        try{
-            result = eventRepository.findById(id);
+        try(Connection connection = ConnectionUtil.getMyConnection()) {
+            Event result = eventRepository.findById(id, connection);
+            return result;
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-        return result;
+    }
+
+    public boolean buyTicket(long eventId, long userId, int numTickets){
+        try(Connection connection = ConnectionUtil.getMyConnection()){
+            Event event = eventRepository.findById(eventId,connection);
+            if(event != null && event.getNumTicketsAvail()>= numTickets){
+                return eventRepository.buyTickets(event, userId, numTickets, connection);
+            }
+            return false;
+        } catch (SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }

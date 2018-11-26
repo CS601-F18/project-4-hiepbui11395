@@ -5,6 +5,7 @@ import cs601.project4.utils.Config;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 public class UserServiceApplication {
@@ -19,7 +20,7 @@ public class UserServiceApplication {
 
         ServletHolder servletHolder = handler.addServlet(ServletContainer.class, "/*");
         servletHolder.setInitOrder(1);
-        servletHolder.setInitParameter("jersey.config.server.provider.classnames",
+        servletHolder.setInitParameter(ServerProperties.PROVIDER_CLASSNAMES,
                 UserServlet.class.getCanonicalName());
 
 

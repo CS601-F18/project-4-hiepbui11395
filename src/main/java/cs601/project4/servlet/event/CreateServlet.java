@@ -1,23 +1,18 @@
 package cs601.project4.servlet.event;
 
 import cs601.project4.entity.Event;
-import cs601.project4.entity.User;
 import cs601.project4.service.EventService;
 import cs601.project4.utils.Config;
-import cs601.project4.utils.Utils;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +54,7 @@ public class CreateServlet extends HttpServlet {
         }
         if(messages.isEmpty()){
             Event event = new Event();
-            eventService.addEvent(event);
+            eventService.create(event);
             resp.sendRedirect(req.getContextPath() + "/events");
         } else{
             req.setAttribute("messages", messages);
