@@ -18,7 +18,7 @@ public class DetailServlet  extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long id = Long.parseLong(req.getParameter("id"));
-        Event event = eventService.findEventById(id);
+        Event event = eventService.findById(id);
         req.setAttribute("event", event);
         RequestDispatcher rd = req.getRequestDispatcher("/event/detail.jsp");
         rd.forward(req,resp);

@@ -21,7 +21,7 @@ public class UserService {
 
     public Long create(User user){
         try(Connection connection = ConnectionUtil.getMyConnection()) {
-            Long result = userRepository.createUser(user, connection);
+            Long result = userRepository.create(user, connection);
             return result;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -31,7 +31,7 @@ public class UserService {
 
     public User findUserById(long id){
         try(Connection connection = ConnectionUtil.getMyConnection()) {
-            User user = userRepository.findUserById(id, connection);
+            User user = userRepository.findById(id, connection);
             return  user;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,7 +41,7 @@ public class UserService {
 
     public User findUserByUsername(String username){
         try(Connection connection = ConnectionUtil.getMyConnection()) {
-            User user = userRepository.findUserByUsername(username, connection);
+            User user = userRepository.findByUsername(username, connection);
             return user;
         } catch (SQLException e) {
             e.printStackTrace();

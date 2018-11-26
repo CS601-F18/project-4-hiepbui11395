@@ -33,14 +33,14 @@ public class UserServlet {
             user = new User(username);
             Long id = userService.create(user);
             if(id==null){
-                return Response.status(Response.Status.BAD_REQUEST).entity("").build();
+                return Response.status(Response.Status.BAD_REQUEST).build();
             } else{
                 JsonObject result =  new JsonObject();
                 result.addProperty("userid", id);
                 return Response.ok(result.toString()).build();
             }
         } else{
-            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
@@ -54,7 +54,7 @@ public class UserServlet {
             UserModel userModel = new UserModel(user, ticketList);
             return Response.status(Response.Status.OK).entity(userModel).build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 

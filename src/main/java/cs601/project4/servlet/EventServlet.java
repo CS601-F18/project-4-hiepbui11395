@@ -2,6 +2,7 @@ package cs601.project4.servlet;
 
 import com.google.gson.JsonObject;
 import cs601.project4.entity.Event;
+import cs601.project4.model.EventModel;
 import cs601.project4.service.EventService;
 import cs601.project4.utils.Config;
 import cs601.project4.utils.HttpUtils;
@@ -58,6 +59,19 @@ public class EventServlet extends HttpServlet {
         if(result){
             return Response.ok().build();
         } else{
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+    }
+
+    @GET
+    @Path("/events/{eventid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response detail(@PathParam("eventid") long eventId){
+        Event event = eventService.findById(eventId);
+        if(event != null){
+            EventModel eventModel = new EventModel(event);
+            return Response.status(Response.Status.OK).entity(eventModel).build();
+        } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }

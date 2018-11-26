@@ -26,7 +26,7 @@ public class UserRepository {
     private final String SQL_UPDATE = "update `user` set `username`=? " +
             "where `id`=?";
 
-    public User findUserById(long id, Connection connection) throws SQLException{
+    public User findById(long id, Connection connection) throws SQLException{
             PreparedStatement statement = connection.prepareStatement(
                     "select * from `user` where `id` = ?");
             statement.setLong(1,id);
@@ -39,7 +39,7 @@ public class UserRepository {
             }
     }
 
-    public User findUserByUsername(String username, Connection connection) throws SQLException{
+    public User findByUsername(String username, Connection connection) throws SQLException{
             PreparedStatement statement = connection.prepareStatement(
                     "select * from `user` where `username` = ?");
             statement.setString(1,username);
@@ -52,7 +52,7 @@ public class UserRepository {
             }
     }
 
-    public Long createUser(User entity, Connection connection) throws SQLException{
+    public Long create(User entity, Connection connection) throws SQLException{
         PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
                 PreparedStatement.RETURN_GENERATED_KEYS);
         statement.setString(1, entity.getUsername());
@@ -69,7 +69,7 @@ public class UserRepository {
         }
     }
 
-    public User updateUser(User entity, Connection connection) throws SQLException {
+    public User update(User entity, Connection connection) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
         statement.setString(1, entity.getUsername());
         statement.setLong(2, entity.getId());

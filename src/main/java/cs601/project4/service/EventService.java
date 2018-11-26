@@ -28,7 +28,7 @@ public class EventService {
         }
     }
 
-    public Event findEventById(long id){
+    public Event findById(long id){
         try(Connection connection = ConnectionUtil.getMyConnection()) {
             Event result = eventRepository.findById(id, connection);
             return result;
