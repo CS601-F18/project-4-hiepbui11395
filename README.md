@@ -1,82 +1,444 @@
-Project 4 Option 1 - Ticket Purchase Application
-================================================
+Project 4 Option 2 - Service-Oriented Architecture
+==================================================
 
 #### Final Code and Deployment Due - During interactive grading appointment scheduled during (or before) finals week. Details will be posted on slack.
 
 #### Checkpoint Due - December 5, 2018 - All students will be required to demonstrate their progress on or before the last day of class - December 5, 2018. Students who fail to demonstrate reasonable progress before this checkpoint will not receive credit for the Project Checkpoint criterion.
 
-For this project you will implement a ticket purchase web application (i.e., your own EventBrite!). You will design and implement a two-tier web application with a Java (Jetty/Servlets) front end and an SQL backend. 
+For this project you will implement a service-oriented version of a ticket purchase application (i.e., your own EventBrite!). 
 
-### Required Features
+### Overview
 
-You *must* complete all of the following required features for a total of 55 points.
+The architecture of the service will be as follows:
+
+![architecture](https://docs.google.com/drawings/d/e/2PACX-1vTjBg_ZETz31hzGUrNL6Fh6GoSEUA9iWLSwyLnPdY0Ixg0YuHhVliwo4fJvfUhFp8mXIxz1dOHMZHw1/pub?w=960&h=720)
+
+**Web Front End** - The web front end will implement an external web service API for the application and will support APIs for the following operations:
+
+1. Get a list of all events
+2. Create a new event
+3. Get details about a specific event
+4. Purchase tickets for an event
+5. Create a user
+6. See a user's information, including *details* of all events for which the user has purchased tickets
+7. Transfer tickets from one user to another
+
+**Event Service** - The event service will manage the list of events and the number of tickets sold and available for each. When a ticket is purchased it is the responsibility of the Event Service to notify the User Service of the user's purchase. The API will support the following operations:
+
+1. Create a new event
+2. Get a list of all events
+3. Get details about a specific event
+4. Purchase tickets for an event, updating the user's ticket list
+
+**User Service** - The user service will manage the user account information, including the events for which a user has purchased tickets. The API will support the following operations:
+
+1. Create a new user
+2. Get user details
+3. Add a new ticket for a user
+4. Transfer tickets from one user to another
+
+### API
+
+#### Front End Service
+
+<details>
+<summary>GET /events</summary>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event Details<br/>
+<pre>
+[
+	{
+		"eventid": 0, 
+		"eventname": "string", 
+		"userid": 0,		
+		"avail": 0, 
+		"purchased": 0
+	} 
+]
+	</pre></td></tr>
+	<tr><td>400</td><td>No events found</td></tr>
+</table>
+</details>
 
 
-| Points   | Feature         | Description |
-| :-------: |:-------------:| :-----|
-| 5[x] | User registration | Provide a *Sign Up* button that allows a user to register to use your site. Users must be able to enter appropriate account information and user data must be saved appropriately in your system. Passwords must be salted and hashed before saving to the database. | 
-| 5[x] | Login and logout | Allow a user to login and logout of your site. Maintain the user session appropriately. |
-| 5[] | View user information | Display user account information including *details* for all events for which the user has purchased tickets. |
-| 5[] | View events | Display a list of all events. |
-| 5[x] | View event | Display details for a specific event. |
-| 5[x] | Create event | Allow the user to create a new event by entering all appropriate detail. |
-| 5[] | Purchase tickets | Allow the user to purchase tickets for an event. |
-| 5[] | Transfer tickets | Allow the user to transfer tickets to another user. |
-| 5[x] | Relational database - Users | Use a relational database to store *user account* data. |
-| 5[x] | Relational database - Events | Use a relational database to store *event* data. |
-| 5[] | Deployment | Your solution must be deployed on the microcloud on your [primary node](https://github.com/CS601-F18/notes/blob/master/admin/mcassignments.md) port **7070** prior to your interactive grading appointment. |
+<details>
+<summary>POST /events/create </summary>
+	
+Body:
 
-You may use additional database tables.
+<pre>
+{
+	"userid": 0,
+	"eventname": "string",
+	"numtickets": 0
+}
+</pre>
 
-### My Task
-[x] Make JDBC util  
-[x] Make login filter to check the session that is login or not  
-[x] Close connection when finish execute statement  
-[] Improve UX in crete event  
-[] Create ticket for the event in the event detail pages  
-[] Event detail page also list all type of ticket related to the event  
+Responses:
 
-### Additional Features
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event created
+<pre>
+{
+	"eventid": 0
+}	
+</pre></td></tr>
+	<tr><td>400</td><td>Event unsuccessfully created</td></tr>
+</table>
+</details>
 
-Select up to 15 points of additional features. *No* extra credit will be awarded for implementing additional features. If you want additional credit, consider [Option 2](project4option2.md).
+<details>
+<summary>GET /events/{eventid}</summary>
 
-| Points   | Feature |  Description |
-| :-------: |:-------------:|  :-----|
-| 5[] | Show *n* events per page | Provide pagination to allow a user to see some specific number of events per page and scroll to the next page. |
-| 5[] | Discount/VIP Tickets | Provide the ability to specify some tickets as discounted (e.g., students) or more expensive (e.g., VIP). |
-| 5[] | Modify/delete event | Allow a user to modify or delete an event *that s/he has created*.|
-| 10[] | Images | Integrate images into your site, allow a user to upload images when creating an event and display when the event is viewed. |
-| 10[] | Sign in with... |  Use a "Sign in with" feature from your favorite site like Slack, Google, or Facebook. |
-| 10[] | Templates |  Use [Velocity](http://velocity.apache.org/) or another template engine to generate your HTML. |
-| 10[] | Search | Allow a user to search events for particular phrases or other features. |
-| 10[] | Hosted | Run on Amazon Web Services or another hosting site. |
-| 5[] | Branding |  Brand your site with a logo, color scheme, etc. |
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event Details<br/>
+<pre>
+{
+	"eventid": 0, 
+	"eventname": "string", 
+	"userid": 0,		
+	"avail": 0, 
+	"purchased": 0
+}
+</pre></td></tr>
+	<tr><td>400</td><td>Event not found</td></tr>
+</table>
+</details>
+
+<details>
+<summary>POST /events/{eventid}/purchase/{userid}</summary>
+Body:
+
+<pre>
+{
+	"tickets": 0
+}
+</pre>
 
 
-### Other Criteria
+Responses:
 
-In addition, your project will be evaluated based on the following criteria for a total of 30 points.
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Tickets purchased</td></tr>
+	<tr><td>400</td><td>Tickets could not be purchased</td></tr>
+</table>
+</details>
 
-| Points   | Criteria |
-| :-------: |:-------------:| 
-| 10 | Code Style |  
-| 15 | Code Quality |  
-| 5 | Project Checkpoint |  
+<details>
+<summary>POST /users/create</summary>
+
+Body:
+
+<pre>
+{
+	"username": "string",
+}
+</pre>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>User created<br/>
+<pre>
+{
+	"userid": 0,
+}	
+</pre></td></tr>
+	<tr><td>400</td><td>User could not be created</td></tr>
+</table>
+</details>
+
+<details>
+<summary>GET /users/{userid}</summary>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>User Details<br/>
+<pre>
+{
+	"userid": 0,
+	"username": "string",
+	"tickets": [
+		{
+			"eventid": 0, 
+			"eventname": "string", 
+			"userid": 0,		
+			"avail": 0, 
+			"purchased": 0
+		}
+	]	
+}
+</pre></td></tr>
+	<tr><td>400</td><td>User not found</td></tr>
+</table>
+</details>
+
+<details>
+<summary>POST /users/{userid}/tickets/transfer</summary>
+
+Body:
+<pre>
+{
+	"eventid": 0,
+	"tickets": 0,
+	"targetuser": 0
+}
+</pre>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event tickets transferred</td></tr>
+	<tr><td>400</td><td>Tickets could not be transferred</td></tr>
+</table>
+
+</details>
+
+
+#### Event Service
+
+<details>
+<summary>POST /create</summary>
+
+Body:
+
+<pre>
+{
+	"userid": 0,
+	"eventname": "string",
+	"numtickets": 0
+}
+</pre>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event created
+<pre>
+{
+	"eventid": 0
+}	
+</pre></td></tr>
+	<tr><td>400</td><td>Event unsuccessfully created</td></tr>
+
+</table>
+</details>
+
+<details>
+<summary>GET /list</summary>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>List of events <br/>
+<pre>
+[
+	{
+		"eventid": 0, 
+		"eventname": "string", 
+		"userid": 0,		
+		"avail": 0, 
+		"purchased": 0
+	}
+]	
+</pre>
+	</td></tr>
+</table>
+</details>
+
+<details>
+<summary>GET /{eventid}</summary>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event details<br/>
+<pre>
+{
+	"eventid": 0, 
+	"eventname": "string", 
+	"userid": 0,		
+	"avail": 0, 
+	"purchased": 0
+}
+</pre>
+	</tr>
+	<tr><td>400</td><td>Event not found</tr>
+</table>
+</details>
+
+<details>
+<summary>POST /purchase/{eventid}</summary>
+
+Body:
+
+<pre>
+{
+	"userid": 0,
+	"eventid": 0,
+	"tickets": 0
+}
+</pre>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event tickets purchased</tr>
+	<tr><td>400</td><td>Tickets could not be purchased</tr>
+</table>
+
+</details>
+
+
+#### User Service
+
+<details>
+<summary>POST /create</summary>
+
+Body:
+
+<pre>
+{
+	"username": "string",
+}
+</pre>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>User created<br/>
+<pre>
+{
+	"userid": 0
+}	
+</pre>
+</tr>
+<tr><td>400</td><td>User unsuccessfully created</tr>
+</table>
+</details>
+
+<details>
+<summary>GET /{userid}</summary>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>User details<br/>
+<pre>
+{
+	"userid": 0,
+	"username": "string",
+	"tickets": [
+		{
+			"eventid": 0
+		}
+	]
+}
+</pre>
+</tr>
+	<tr><td>400</td><td>User not found</tr>
+</table>
+</details>
+
+<details>
+<summary>POST /{userid}/tickets/add</summary>
+
+Body:
+
+<pre>
+{
+	"eventid": 0,
+	"tickets": 0
+}
+</pre>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event tickets added</tr>
+	<tr><td>400</td><td>Tickets could not be added</tr>
+
+</table>
+</details>
+
+<details>
+<summary>POST /{userid}/tickets/transfer</summary>
+
+Body:
+
+<pre>
+{
+	"eventid": 0,
+	"tickets": 0,
+	"targetuser": 0
+}
+</pre>
+
+Responses:
+
+<table>
+	<tr><td>Code</td><td>Description</td></tr>
+	<tr><td>200</td><td>Event tickets transfered</tr>
+	<tr><td>400</td><td>Tickets could not be transfered</tr>
+</table>
+
+</details>
 
 ### Requirements
 
 1. You will use Servlets/Jetty as your web framework.
-2. You will use a SQL database to store all data including user information, event information, and ticket transaction/purchase information. You are required to design the database tables. 
-3. By the time of your demonstration you must have your application deployed on the microcloud. The web site must be deployed on your [primary node](https://github.com/CS601-F18/notes/blob/master/admin/mcassignments.md) port **7070**. See the [guide to running on the microcloud](https://github.com/srollins/software-dev-materials/blob/master/notes/usf_guides/microcloud.md) to ensure that your process is long running.
+2. You will use a SQL database to store all data including user information, event information, and ticket transaction/purchase information. You are required to design the database tables. Though you will use the same centralized database for each service, to accurately mimic a service-oriented architecture ensure that one service does *not* access the database tables of the other service. Instead, services should communicate via the API implemented.
+3. By the time of your interactive grading appointment you must have your application deployed on the microcloud. The web front end must be deployed on your [primary node](https://github.com/CS601-F18/notes/blob/master/admin/mcassignments.md) port **7070**. Your services (all three components!) must be running *on different hosts* at the time your solution is *graded*. See the [guide to running on the microcloud](https://github.com/srollins/software-dev-materials/blob/master/notes/usf_guides/microcloud.md) to ensure that your process is long running.
+
 
 ### Submission Requirements
 
-You will schedule an interactive grading appointment during finals week. Before your scheduled appointment, submit all code to your github repository for this assignment **and** ensure your complete solution is be running on the microcloud. Your server must be deployed on your [primary node](https://github.com/CS601-F18/notes/blob/master/admin/mcassignments.md) port **7070**. 
+You will schedule an interactive grading appointment during finals week. Before your scheduled appointment, submit all code to your github repository for this assignment **and** ensure your complete solution is be running on the microcloud. Your web front end must be deployed on your [primary node](https://github.com/CS601-F18/notes/blob/master/admin/mcassignments.md) port **7070**. Your services (all three components!) must be running *on different hosts*.
 
 Use the following link to create your private github repository for this assignment: [Project 4](https://classroom.github.com/a/TdnexnOy)
 
 For full credit, make sure to follow all [Style Guidelines](https://github.com/CS601-F18/notes/blob/master/admin/style.md). Points will be deducted for each violation.
 
+### Grading Rubric
+
+Requirements for demonstration of the functionality and database integration will be made available prior to interactive grading. It will be the responsibility of the student to clearly demonstrate the functionality of all APIs via appropriate test cases and to demonstrate that data is saved to the database correctly.
+
+| Points | Criterion |
+| ------ | -------- |  
+| 5 | Project Checkpoint |  
+| 10 | Style |  
+| 15 | Code Quality |  
+| 15 | Event Service Functionality - Demonstration |  
+| 10 | Event Service Functionality - Instructor Test Cases |  
+| 15 | User Service Functionality- Demonstration |  
+| 10 | User Service Functionality - Instructor Test Cases |  
+| 10 | Front End Service Functionality - Demonstration |  
+| 10 | Front End Service Functionality - Instructor Test Cases |  
+| 10 | Database Integration |  
+
+*A student who earns full credit for this assignment will earn 110% (110/100) for this project.*
+
+Partial credit may be awarded for partial functionality and/or partially correct design or style elements.
 
 ### Academic Dishonesty
 

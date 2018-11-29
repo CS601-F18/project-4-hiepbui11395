@@ -15,7 +15,6 @@ import java.sql.SQLException;
 
 public class EventRepository {
     private static EventRepository instance;
-    private final String USER_SERVICE_URL = Config.getInstance().getProperty("userUrl");
 
     public static synchronized EventRepository getInstace() {
         if(instance == null){
@@ -29,50 +28,49 @@ public class EventRepository {
     private final String SQL_UPDATE = "update `event` set `userId`=?,`name`=?,`numTickets`=?,`numTicketsAvail`=? " +
             "where `id`=?";
 
-    public Event create(Event entity, Connection connection) throws SQLException{
-        PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
-                PreparedStatement.RETURN_GENERATED_KEYS);
-        statement.setLong(1, entity.getUserId());
-        statement.setString(2, entity.getName());
-        statement.setInt(3, entity.getNumTickets());
-        statement.setInt(4, entity.getNumTicketsAvail());
+    public Event create(Event entity) throws SQLException{
+        try(Connection connection = ConnectionUtil.getMyConnection()){
+            PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
+                    PreparedStatement.RETURN_GENERATED_KEYS);
+            statement.setLong(1, entity.getUserId());
+            statement.setString(2, entity.getName());
+            statement.setInt(3, entity.getNumTickets());
+            statement.setInt(4, entity.getNumTicketsAvail());
 
-        int affectedRow = statement.executeUpdate();
-        if(affectedRow == 0){
-            return null;
-        }
-        ResultSet rs = statement.getGeneratedKeys();
-        if(rs.next()){
-            entity.setId(rs.getLong(1));
-            return entity;
-        } else{
-            return null;
-        }
-    }
-
-    public boolean buyTickets(Event entity, long userId, int numTickets, Connection connection) throws SQLException{
-        PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
-        statement.setLong(1, entity.getUserId());
-        statement.setString(2, entity.getName());
-        statement.setInt(3, entity.getNumTickets());
-        statement.setInt(4, entity.getNumTicketsAvail() - numTickets);
-        statement.setLong(5, entity.getId());
-
-        int affectedRow = statement.executeUpdate();
-        if(affectedRow != 0){
-            String path = "/" + userId + "/tickets/add";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("eventid", entity.getId());
-            jsonObject.addProperty("tickets", numTickets);
-            Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonObject.toString());
-            if(response.getStatus()== HttpStatus.OK_200){
-                return true;
+            int affectedRow = statement.executeUpdate();
+            if(affectedRow == 0){
+                return null;
+            }
+            ResultSet rs = statement.getGeneratedKeys();
+            if(rs.next()){
+                entity.setId(rs.getLong(1));
+                return entity;
+            } else{
+                return null;
             }
         }
-        return false;
     }
 
-    public Event findById(long id, Connection connection) throws SQLException {
+    /**
+     * Update number of available ticket in db
+     * @param entity
+     * @param numTickets
+     * @throws SQLException
+     */
+    public void updateAvailableTicket(Event entity, int numTickets) throws SQLException{
+        try(Connection connection = ConnectionUtil.getMyConnection()){
+            PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
+            statement.setLong(1, entity.getUserId());
+            statement.setString(2, entity.getName());
+            statement.setInt(3, entity.getNumTickets());
+            statement.setInt(4, entity.getNumTicketsAvail() - numTickets);
+            statement.setLong(5, entity.getId());
+            statement.executeUpdate();
+        }
+    }
+
+    public Event findById(long id) throws SQLException {
+        try(Connection connection = ConnectionUtil.getMyConnection()){
             PreparedStatement statement = connection.prepareStatement("select * from `event` where `id` = ?");
             statement.setLong(1,id);
             ResultSet rs = statement.executeQuery();
@@ -82,5 +80,6 @@ public class EventRepository {
             } else{
                 return null;
             }
+        }
     }
 }

@@ -28,27 +28,28 @@ public class TicketRepository {
     private final String SQL_UPDATE = "update `event` set `userId`=?,`eventId`=? " +
             "where `id`=?";
 
-    public Long create(long userId, long eventId, Connection connection) throws SQLException{
-        PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
-                PreparedStatement.RETURN_GENERATED_KEYS);
-        statement.setLong(1, userId);
-        statement.setLong(2, eventId);
+    public Long create(long userId, long eventId) throws SQLException{
+        try(Connection connection = ConnectionUtil.getMyConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
+                    PreparedStatement.RETURN_GENERATED_KEYS);
+            statement.setLong(1, userId);
+            statement.setLong(2, eventId);
 
-        int affectedRow = statement.executeUpdate();
-        if(affectedRow == 0){
-            return null;
-        }
-        ResultSet rs = statement.getGeneratedKeys();
-        if(rs.next()){
-            long id = rs.getLong(1);
-            return id;
-        } else{
-            return null;
+            int affectedRow = statement.executeUpdate();
+            if (affectedRow == 0) {
+                return null;
+            }
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next()) {
+                long id = rs.getLong(1);
+                return id;
+            } else {
+                return null;
+            }
         }
     }
 
     public List<Ticket> findTicketsByUserId(long userId) throws SQLException {
-
         try(Connection connection = ConnectionUtil.getMyConnection())
         {
             PreparedStatement statement = connection.prepareStatement(

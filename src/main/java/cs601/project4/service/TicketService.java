@@ -38,7 +38,7 @@ public class TicketService {
             connection = ConnectionUtil.getMyConnection();
             try{
                 for(int i=0;i<numTickets;i++){
-                    ticketRepository.create(userId, eventId, connection);
+                    ticketRepository.create(userId, eventId);
                 }
                 return true;
             } finally {
