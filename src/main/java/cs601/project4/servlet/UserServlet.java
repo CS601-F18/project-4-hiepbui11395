@@ -85,7 +85,7 @@ public class UserServlet {
         int numTickets = jsonObject.get("tickets").getAsInt();
         long targetUserId = jsonObject.get("targetuser").getAsLong();
         if(ticketService.transferTicket(userId,targetUserId,eventId,numTickets)){
-            return Response.ok().entity("").build();
+            return Response.ok("").build();
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }

@@ -1,4 +1,4 @@
-package cs601.project4;
+package cs601.project4.application;
 
 import cs601.project4.servlet.UserServlet;
 import cs601.project4.servlet.WebFrontEndServlet;

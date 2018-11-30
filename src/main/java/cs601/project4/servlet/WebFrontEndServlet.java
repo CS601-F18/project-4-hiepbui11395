@@ -1,15 +1,13 @@
 package cs601.project4.servlet;
 
 import com.google.gson.JsonObject;
-import cs601.project4.entity.User;
+import cs601.project4.model.UserModel;
 import cs601.project4.utils.Config;
 import cs601.project4.utils.HttpUtils;
 import cs601.project4.utils.Utils;
-import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.*;
-import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -67,19 +65,22 @@ public class WebFrontEndServlet extends HttpServlet {
         return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
     }
 
-    @GET
-    @Path("/users/{userid}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(@PathParam("userid") long userId) {
-        String path = "/"+userId;
-        return HttpUtils.callGetRequest(USER_SERVICE_URL, path);
-    }
-
     @POST
     @Path("/users/{userid}/tickets/transfer")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response transferTicket(@PathParam("userid") long userId, String jsonRequest){
         String path = "/" + userId + "/tickets/transfer";
         return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
+    }
+
+    @GET
+    @Path("/users/{userid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUser(@PathParam("userid") long userId){
+        String path = "/"+userId;
+        Response response = HttpUtils.callGetRequest(USER_SERVICE_URL, path);
+        String userModel = response.readEntity(String.class);
+        //Call EventService for event detail
+        return Response.ok().build();
     }
 }

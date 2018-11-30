@@ -59,7 +59,7 @@ public class EventServlet extends HttpServlet {
         int numTickets = jsonObject.get("tickets").getAsInt();
         boolean result = eventService.buyTicket(eventId, userId, numTickets);
         if(result){
-            return Response.ok().build();
+            return Response.ok("").build();
         } else{
             return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         }

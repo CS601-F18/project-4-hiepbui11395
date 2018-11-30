@@ -3,34 +3,36 @@ package cs601.project4.model;
 import cs601.project4.entity.Ticket;
 import cs601.project4.entity.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserModel {
-    private long userId;
+    private long userid;
     private String username;
-    private List<Ticket> tickets;
+    private List<TicketModel> tickets;
 
     public UserModel() {
     }
 
-    public UserModel(long userId, String username, List<Ticket> tickets) {
-        this.userId = userId;
+    public UserModel(long userId, String username, List<TicketModel> tickets) {
+        this.userid = userId;
         this.username = username;
         this.tickets = tickets;
     }
 
     public UserModel(User user, List<Ticket> tickets) {
-        this.userId = user.getId();
+        this.userid = user.getId();
         this.username = user.getUsername();
-        this.tickets = tickets;
+        this.tickets = new ArrayList<>();
+        tickets.forEach(t -> this.tickets.add(new TicketModel(t)));
     }
 
-    public long getUserId() {
-        return userId;
+    public long getUserid() {
+        return userid;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setUserid(long userId) {
+        this.userid = userid;
     }
 
     public String getUsername() {
@@ -41,11 +43,11 @@ public class UserModel {
         this.username = username;
     }
 
-    public List<Ticket> getTickets() {
+    public List<TicketModel> getTickets() {
         return tickets;
     }
 
-    public void setTickets(List<Ticket> tickets) {
+    public void setTickets(List<TicketModel> tickets) {
         this.tickets = tickets;
     }
 }
