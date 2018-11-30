@@ -2,6 +2,7 @@ package cs601.project4.repository;
 
 import cs601.project4.entity.User;
 import cs601.project4.jdbc.ConnectionUtil;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.annotation.Resource;
 import java.sql.Connection;
@@ -26,40 +27,40 @@ public class UserRepository {
     private final String SQL_UPDATE = "update `user` set `username`=? " +
             "where `id`=?";
 
-    public User findById(long id) throws SQLException{
-        try(Connection connection = ConnectionUtil.getMyConnection()) {
+    public User findById(long id){
+        BasicDataSource dataSource = ConnectionUtil.getMyConnection();
+        try(Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                    "select * from `user` where `id` = ?");
+                    "select * from `user` where `id` = ?"))
+        {
             statement.setLong(1, id);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                User user = new User(rs);
-                return user;
-            } else {
-                return null;
-            }
+            return getUserResultSet(statement);
+        } catch (SQLException e){
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public User findByUsername(String username) throws SQLException{
-        try(Connection connection = ConnectionUtil.getMyConnection()) {
+    public User findByUsername(String username){
+        BasicDataSource dataSource = ConnectionUtil.getMyConnection();
+        try(Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                    "select * from `user` where `username` = ?");
+                    "select * from `user` where `username` = ?"))
+        {
             statement.setString(1, username);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                User user = new User(rs);
-                return user;
-            } else {
-                return null;
-            }
+            return getUserResultSet(statement);
+        } catch (SQLException e){
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public Long create(User entity) throws SQLException{
-        try(Connection connection = ConnectionUtil.getMyConnection()) {
+    public Long create(User entity){
+        BasicDataSource dataSource = ConnectionUtil.getMyConnection();
+        try(Connection connection = dataSource.getConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
-                    PreparedStatement.RETURN_GENERATED_KEYS);
+                    PreparedStatement.RETURN_GENERATED_KEYS))
+        {
             statement.setString(1, entity.getUsername());
 
             int affectedRow = statement.executeUpdate();
@@ -72,18 +73,17 @@ public class UserRepository {
             } else {
                 return null;
             }
+        } catch (SQLException e){
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public User update(User entity) throws SQLException {
-        try(Connection connection = ConnectionUtil.getMyConnection()) {
-            PreparedStatement statement = connection.prepareStatement(SQL_UPDATE);
-            statement.setString(1, entity.getUsername());
-            statement.setLong(2, entity.getId());
-
-            int affectedRow = statement.executeUpdate();
-            if (affectedRow != 0) {
-                return entity;
+    private User getUserResultSet(PreparedStatement statement) throws SQLException {
+        try(ResultSet rs = statement.executeQuery()) {
+            if (rs.next()) {
+                User user = new User(rs);
+                return user;
             } else {
                 return null;
             }

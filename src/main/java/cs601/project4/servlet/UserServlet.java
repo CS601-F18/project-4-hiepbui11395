@@ -21,7 +21,7 @@ public class UserServlet {
     private final String EVENT_SERVICE_URL = Config.getInstance().getProperty("eventUrl");
 
     @POST
-    @Path("create")
+    @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(String jsonRequesst) {
@@ -33,14 +33,14 @@ public class UserServlet {
             user = new User(username);
             Long id = userService.create(user);
             if(id==null){
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                return Response.status(Response.Status.BAD_REQUEST).entity("").build();
             } else{
                 JsonObject result =  new JsonObject();
                 result.addProperty("userid", id);
                 return Response.ok(result.toString()).build();
             }
         } else{
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         }
     }
 
@@ -54,7 +54,7 @@ public class UserServlet {
             UserModel userModel = new UserModel(user, ticketList);
             return Response.status(Response.Status.OK).entity(userModel).build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         }
     }
 
@@ -69,11 +69,24 @@ public class UserServlet {
             JsonObject jsonObject = Utils.toJsonObject(jsonRequest);
             long eventId = jsonObject.get("eventid").getAsLong();
             int numTickets = jsonObject.get("tickets").getAsInt();
-
-            if(ticketService.addTicket(userId, eventId, numTickets)){
-                return Response.ok().build();
-            }
+            //Add tickets to user
+            ticketService.addTicket(userId, eventId, numTickets);
         }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
+    }
+
+    @POST
+    @Path("/{userid}/tickets/transfer")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response transferTicket(@PathParam("userid") long userId, String jsonRequest){
+        //Check if userId valid
+        JsonObject jsonObject = Utils.toJsonObject(jsonRequest);
+        long eventId = jsonObject.get("eventid").getAsLong();
+        int numTickets = jsonObject.get("tickets").getAsInt();
+        long targetUserId = jsonObject.get("targetuser").getAsLong();
+        if(ticketService.transferTicket(userId,targetUserId,eventId,numTickets)){
+            return Response.ok().entity("").build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 }

@@ -18,21 +18,20 @@ public class WebFrontEndServlet extends HttpServlet {
     private final String USER_SERVICE_URL = Config.getInstance().getProperty("userUrl");
     private final String EVENT_SERVICE_URL = Config.getInstance().getProperty("eventUrl");
 
-    @POST
-    @Path("/users/create")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("/events")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(String jsonRequest) {
-        String path = "/create";
-        return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
+    public Response getEvents(){
+        String path = "/list";
+        return HttpUtils.callGetRequest(EVENT_SERVICE_URL, path);
     }
 
     @GET
-    @Path("/users/{userid}")
+    @Path("/events/{eventid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createUser(@PathParam("userid") long userId) {
-        String path = "/"+userId;
-        return HttpUtils.callGetRequest(USER_SERVICE_URL, path);
+    public Response getEvent(@PathParam("eventid") long eventId){
+        String path = "/events/"+eventId;
+        return HttpUtils.callGetRequest(EVENT_SERVICE_URL, path);
     }
 
     @POST
@@ -57,5 +56,30 @@ public class WebFrontEndServlet extends HttpServlet {
         jsonObject.addProperty("userid", userid);
         jsonObject.addProperty("eventid", eventId);
         return HttpUtils.callPostRequest(EVENT_SERVICE_URL, path, jsonObject.toString());
+    }
+
+    @POST
+    @Path("/users/create")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createUser(String jsonRequest) {
+        String path = "/create";
+        return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
+    }
+
+    @GET
+    @Path("/users/{userid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createUser(@PathParam("userid") long userId) {
+        String path = "/"+userId;
+        return HttpUtils.callGetRequest(USER_SERVICE_URL, path);
+    }
+
+    @POST
+    @Path("/users/{userid}/tickets/transfer")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response transferTicket(@PathParam("userid") long userId, String jsonRequest){
+        String path = "/" + userId + "/tickets/transfer";
+        return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
     }
 }

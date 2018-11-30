@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/")
 public class EventServlet extends HttpServlet {
@@ -20,7 +22,7 @@ public class EventServlet extends HttpServlet {
     private final String USER_SERVICE_URL = Config.getInstance().getProperty("userUrl");
 
     @POST
-    @Path("create")
+    @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(String jsonRequest) {
@@ -38,7 +40,7 @@ public class EventServlet extends HttpServlet {
         Event event = new Event(userId, eventName, numTickets, numTickets);
         Long id = eventService.create(event);
         if(id == null){
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         } else{
             JsonObject result =  new JsonObject();
             result.addProperty("eventid", id);
@@ -59,7 +61,7 @@ public class EventServlet extends HttpServlet {
         if(result){
             return Response.ok().build();
         } else{
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         }
     }
 
@@ -70,9 +72,21 @@ public class EventServlet extends HttpServlet {
         Event event = eventService.findById(eventId);
         if(event != null){
             EventModel eventModel = new EventModel(event);
-            return Response.status(Response.Status.OK).entity(eventModel).build();
+            return Response.ok().entity(eventModel).build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         }
+    }
+
+    @GET
+    @Path("/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getEvents(){
+        List<Event> eventList = eventService.gets();
+        List<EventModel> eventModelList = new ArrayList<>();
+        for(int i=0;i<eventList.size();i++){
+            eventModelList.add(new EventModel(eventList.get(i)));
+        }
+        return Response.ok().entity(eventModelList).build();
     }
 }

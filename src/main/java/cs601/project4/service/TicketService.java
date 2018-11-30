@@ -1,8 +1,12 @@
 package cs601.project4.service;
 
+import com.google.gson.JsonObject;
 import cs601.project4.entity.Ticket;
+import cs601.project4.entity.User;
 import cs601.project4.jdbc.ConnectionUtil;
 import cs601.project4.repository.TicketRepository;
+import cs601.project4.repository.UserRepository;
+import cs601.project4.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -10,6 +14,7 @@ import java.util.List;
 
 public class TicketService {
     TicketRepository ticketRepository = TicketRepository.getInstance();
+    UserRepository userRepository = UserRepository.getInstance();
 
     private static TicketService instance;
 
@@ -23,35 +28,32 @@ public class TicketService {
     }
 
     public List<Ticket> findTicketsByUserId(long userId){
-        try {
-            List<Ticket> ticketList = ticketRepository.findTicketsByUserId(userId);
-            return ticketList;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        List<Ticket> ticketList = ticketRepository.findTicketsByUserId(userId);
+        return ticketList;
     }
 
-    public boolean addTicket(long userId, long eventId, int numTickets){
-        Connection connection = null;
-        try {
-            connection = ConnectionUtil.getMyConnection();
-            try{
-                for(int i=0;i<numTickets;i++){
-                    ticketRepository.create(userId, eventId);
-                }
-                return true;
-            } finally {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                connection.rollback();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-            return false;
+    public List<Ticket> findTicketsByUserIdAndEventId(long userId, long eventId){
+        List<Ticket> ticketList = ticketRepository.findTicketsByUserIdAndEventId(userId,eventId);
+        return ticketList;
+    }
+
+    public void addTicket(long userId, long eventId, int numTickets){
+        for(int i=0;i<numTickets;i++){
+            ticketRepository.create(userId, eventId);
         }
+    }
+
+    public boolean transferTicket(long userId, long targetUserId, long eventId, int numTickets){
+        User user = userRepository.findById(userId);
+        User targetUser = userRepository.findById(targetUserId);
+        //TODO: do i need to check for event ID here because eventId in ticket is always valid
+        if(user!=null && targetUser!=null){
+            List<Ticket> ticketList = ticketRepository.findTicketsByUserIdAndEventId(userId,eventId);
+            //Check if user have enough ticket to transfer
+            if(ticketList.size()>=numTickets){
+                return ticketRepository.transferTicket(ticketList,userId,targetUserId,numTickets);
+            }
+        }
+        return false;
     }
 }
