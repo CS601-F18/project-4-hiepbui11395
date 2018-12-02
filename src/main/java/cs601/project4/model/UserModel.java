@@ -1,5 +1,7 @@
 package cs601.project4.model;
 
+import com.google.gson.JsonObject;
+import cs601.project4.entity.Event;
 import cs601.project4.entity.Ticket;
 import cs601.project4.entity.User;
 
@@ -10,12 +12,13 @@ public class UserModel {
     private long userid;
     private String username;
     private List<TicketModel> tickets;
+    private List<EventModel> events;
 
     public UserModel() {
     }
 
-    public UserModel(long userId, String username, List<TicketModel> tickets) {
-        this.userid = userId;
+    public UserModel(long userid, String username, List<TicketModel> tickets) {
+        this.userid = userid;
         this.username = username;
         this.tickets = tickets;
     }
@@ -31,7 +34,7 @@ public class UserModel {
         return userid;
     }
 
-    public void setUserid(long userId) {
+    public void setUserid(long userid) {
         this.userid = userid;
     }
 
@@ -49,5 +52,13 @@ public class UserModel {
 
     public void setTickets(List<TicketModel> tickets) {
         this.tickets = tickets;
+    }
+
+    public List<EventModel> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<EventModel> events) {
+        this.events = events;
     }
 }

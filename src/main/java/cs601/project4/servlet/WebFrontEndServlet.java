@@ -1,15 +1,24 @@
 package cs601.project4.servlet;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import cs601.project4.entity.Event;
+import cs601.project4.model.EventModel;
+import cs601.project4.model.TicketModel;
 import cs601.project4.model.UserModel;
 import cs601.project4.utils.Config;
 import cs601.project4.utils.HttpUtils;
 import cs601.project4.utils.Utils;
+import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/")
 public class WebFrontEndServlet extends HttpServlet {
@@ -77,10 +86,28 @@ public class WebFrontEndServlet extends HttpServlet {
     @Path("/users/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("userid") long userId){
+        Gson gson = new Gson();
         String path = "/"+userId;
         Response response = HttpUtils.callGetRequest(USER_SERVICE_URL, path);
-        String userModel = response.readEntity(String.class);
-        //Call EventService for event detail
-        return Response.ok().build();
+        if(response.getStatus() == HttpStatus.OK_200) {
+            UserModel userModel = response.readEntity(UserModel.class);
+            List<EventModel> eventList = new ArrayList<>();
+            for(TicketModel ticket : userModel.getTickets()){
+                response = this.getEvent(ticket.getEventid());
+                if(response.getStatus() == HttpStatus.BAD_REQUEST_400){
+                    return Response.status(HttpStatus.BAD_REQUEST_400).entity("").build();
+                } else{
+                    EventModel eventModel = response.readEntity(EventModel.class);
+                    eventList.add(eventModel);
+                }
+            }
+            userModel.setEvents(eventList);
+            JsonObject result = new JsonObject();
+            result.addProperty("userid", userModel.getUserid());
+            result.addProperty("username", userModel.getUsername());
+            result.add("tickets", gson.toJsonTree(userModel.getEvents()));
+            return Response.ok(result.toString()).build();
+        }
+        return Response.status(HttpStatus.BAD_REQUEST_400).entity("").build();
     }
 }
