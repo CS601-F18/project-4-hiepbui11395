@@ -92,6 +92,7 @@ public class EventRepository {
             statement.setInt(4, entity.getNumTicketsAvail() - numTickets);
             statement.setLong(5, entity.getId());
             statement.executeUpdate();
+            entity.setNumTicketsAvail(entity.getNumTicketsAvail() - numTickets);
         } catch (SQLException e){
             e.printStackTrace();
         }

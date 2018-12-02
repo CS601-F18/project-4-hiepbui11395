@@ -1,12 +1,20 @@
 package cs601.project4.model;
 
+import com.google.gson.annotations.SerializedName;
 import cs601.project4.entity.Event;
 
 public class EventModel {
+    @SerializedName("eventid")
     private Long eventId;
+
+    @SerializedName("eventname")
     private String eventName;
+
+    @SerializedName("userid")
     private long userId;
+
     private int avail;
+
     private int purchased;
 
     public EventModel() {
@@ -26,7 +34,6 @@ public class EventModel {
         this.userId = event.getUserId();
         this.avail = event.getNumTicketsAvail();
         this.purchased = event.getNumTickets() - event.getNumTicketsAvail();
-
     }
 
     public Long getEventid() {

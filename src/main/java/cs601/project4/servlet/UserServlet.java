@@ -3,6 +3,8 @@ package cs601.project4.servlet;
 import com.google.gson.JsonObject;
 import cs601.project4.entity.Ticket;
 import cs601.project4.entity.User;
+import cs601.project4.model.TicketModel;
+import cs601.project4.model.TicketTransferModel;
 import cs601.project4.model.UserModel;
 import cs601.project4.service.TicketService;
 import cs601.project4.service.UserService;
@@ -24,13 +26,12 @@ public class UserServlet {
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(String jsonRequesst) {
-        JsonObject jsonObject = Utils.toJsonObject(jsonRequesst);
-        String username = jsonObject.get("username").getAsString();
+    public Response create(String jsonRequest) {
+        UserModel userModel = Utils.parseJsonToObject(jsonRequest, UserModel.class);
         //Check if username/email exist
-        User user = userService.findUserByUsername(username);
+        User user = userService.findUserByUsername(userModel.getUsername());
         if(user==null){
-            user = new User(username);
+            user = new User(userModel.getUsername());
             Long id = userService.create(user);
             if(id==null){
                 return Response.status(Response.Status.BAD_REQUEST).entity("").build();
@@ -45,9 +46,9 @@ public class UserServlet {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("id") long id){
+    public Response getUserById(@PathParam("userid") long id){
         User user = userService.findUserById(id);
         if(user != null){
             List<Ticket> ticketList = ticketService.findTicketsByUserId(user.getId());
@@ -66,11 +67,10 @@ public class UserServlet {
         //Check userId valid
         User user = userService.findUserById(userId);
         if(user!=null){
-            JsonObject jsonObject = Utils.toJsonObject(jsonRequest);
-            long eventId = jsonObject.get("eventid").getAsLong();
-            int numTickets = jsonObject.get("tickets").getAsInt();
+            TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
             //Add tickets to user
-            ticketService.addTicket(userId, eventId, numTickets);
+            ticketService.addTicket(userId, ticketModel.getEventId(), ticketModel.getTickets());
+            return Response.ok("").build();
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
@@ -80,11 +80,8 @@ public class UserServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response transferTicket(@PathParam("userid") long userId, String jsonRequest){
         //Check if userId valid
-        JsonObject jsonObject = Utils.toJsonObject(jsonRequest);
-        long eventId = jsonObject.get("eventid").getAsLong();
-        int numTickets = jsonObject.get("tickets").getAsInt();
-        long targetUserId = jsonObject.get("targetuser").getAsLong();
-        if(ticketService.transferTicket(userId,targetUserId,eventId,numTickets)){
+        TicketTransferModel model = Utils.parseJsonToObject(jsonRequest, TicketTransferModel.class);
+        if(ticketService.transferTicket(userId,model.getTargetUser(),model.getEventId(),model.getTickets())){
             return Response.ok("").build();
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();

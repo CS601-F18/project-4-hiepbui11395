@@ -1,10 +1,7 @@
 package cs601.project4.servlet;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import cs601.project4.entity.Event;
 import cs601.project4.model.EventModel;
 import cs601.project4.model.TicketModel;
 import cs601.project4.model.UserModel;
@@ -55,14 +52,13 @@ public class WebFrontEndServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response purchaseTicket(@PathParam("eventid") long eventId,
-                                   @PathParam("userid") long userid,String jsonRequest){
-        JsonObject jsonObject = Utils.toJsonObject(jsonRequest);
-        int tickets = jsonObject.get("tickets").getAsInt();
+                                   @PathParam("userid") long userId,String jsonRequest){
+        TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
         //TODO: Call user service to add ticket
         String path = "/purchase/"+eventId;
-        jsonObject.addProperty("userid", userid);
-        jsonObject.addProperty("eventid", eventId);
-        return HttpUtils.callPostRequest(EVENT_SERVICE_URL, path, jsonObject.toString());
+        ticketModel.setEventId(eventId);
+        ticketModel.setUserId(userId);
+        return HttpUtils.callPostRequest(EVENT_SERVICE_URL, path, Utils.gson.toJson(ticketModel));
     }
 
     @POST
@@ -86,14 +82,13 @@ public class WebFrontEndServlet extends HttpServlet {
     @Path("/users/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("userid") long userId){
-        Gson gson = new Gson();
         String path = "/"+userId;
         Response response = HttpUtils.callGetRequest(USER_SERVICE_URL, path);
         if(response.getStatus() == HttpStatus.OK_200) {
             UserModel userModel = response.readEntity(UserModel.class);
             List<EventModel> eventList = new ArrayList<>();
             for(TicketModel ticket : userModel.getTickets()){
-                response = this.getEvent(ticket.getEventid());
+                response = this.getEvent(ticket.getEventId());
                 if(response.getStatus() == HttpStatus.BAD_REQUEST_400){
                     return Response.status(HttpStatus.BAD_REQUEST_400).entity("").build();
                 } else{
@@ -103,9 +98,9 @@ public class WebFrontEndServlet extends HttpServlet {
             }
             userModel.setEvents(eventList);
             JsonObject result = new JsonObject();
-            result.addProperty("userid", userModel.getUserid());
+            result.addProperty("userid", userModel.getUserId());
             result.addProperty("username", userModel.getUsername());
-            result.add("tickets", gson.toJsonTree(userModel.getEvents()));
+            result.add("tickets", Utils.gson.toJsonTree(userModel.getEvents()));
             return Response.ok(result.toString()).build();
         }
         return Response.status(HttpStatus.BAD_REQUEST_400).entity("").build();

@@ -37,16 +37,16 @@ public class EventService {
         Event event = eventRepository.findById(eventId);
         if(event != null && event.getNumTicketsAvail()>= numTickets){
             eventRepository.updateAvailableTicket(event, numTickets);
+            String path = "/" + userId + "/tickets/add";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("eventid", eventId);
+            jsonObject.addProperty("tickets", numTickets);
+            Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonObject.toString());
+            if(response.getStatus()== HttpStatus.OK_200){
+                return true;
+            }
+            eventRepository.updateAvailableTicket(event, -numTickets);
         }
-        String path = "/" + userId + "/tickets/add";
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("eventid", eventId);
-        jsonObject.addProperty("tickets", numTickets);
-        Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonObject.toString());
-        if(response.getStatus()== HttpStatus.OK_200){
-            return true;
-        }
-        eventRepository.updateAvailableTicket(event, -numTickets);
         return false;
     }
 

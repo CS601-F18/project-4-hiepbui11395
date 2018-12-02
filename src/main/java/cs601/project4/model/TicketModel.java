@@ -1,26 +1,49 @@
 package cs601.project4.model;
 
+import com.google.gson.annotations.SerializedName;
 import cs601.project4.entity.Ticket;
 
 public class TicketModel {
-    private long eventid;
+    @SerializedName("eventid")
+    private long eventId;
 
-    public TicketModel(long eventid) {
-        this.eventid = eventid;
+    @SerializedName("userid")
+    private long userId;
+
+    private int tickets;
+
+    public TicketModel(long eventId) {
+        this.eventId = eventId;
     }
 
     public TicketModel() {
     }
 
     public TicketModel(Ticket ticket){
-        this.eventid = ticket.getEventId();
+        this.eventId = ticket.getEventId();
     }
 
-    public long getEventid() {
-        return eventid;
+    public long getEventId() {
+        return eventId;
     }
 
-    public void setEventid(long eventid) {
-        this.eventid = eventid;
+    public void setEventId(long eventid) {
+        this.eventId = eventid;
+    }
+
+    public int getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(int tickets) {
+        this.tickets = tickets;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

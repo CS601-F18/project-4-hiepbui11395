@@ -2,7 +2,10 @@ package cs601.project4.servlet;
 
 import com.google.gson.JsonObject;
 import cs601.project4.entity.Event;
+import cs601.project4.entity.Ticket;
+import cs601.project4.model.EventCreateModel;
 import cs601.project4.model.EventModel;
+import cs601.project4.model.TicketModel;
 import cs601.project4.service.EventService;
 import cs601.project4.utils.Config;
 import cs601.project4.utils.HttpUtils;
@@ -26,18 +29,16 @@ public class EventServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(String jsonRequest) {
-        JsonObject jsonObject = Utils.toJsonObject(jsonRequest);
-        long userId = jsonObject.get("userid").getAsLong();
-        String eventName = jsonObject.get("eventname").getAsString();
-        int numTickets = jsonObject.get("numtickets").getAsInt();
+        EventCreateModel model = Utils.parseJsonToObject(jsonRequest, EventCreateModel.class);
         //Check if user exist by calling user service
-        String path = "/"+userId;
+        String path = "/"+model.getUserId();
         Response response = HttpUtils.callGetRequest(USER_SERVICE_URL, path);
         if(response.getStatus()!= HttpStatus.OK_200){
             return response;
         }
 
-        Event event = new Event(userId, eventName, numTickets, numTickets);
+        Event event = new Event(model.getUserId(), model.getEventName(),
+                model.getNumTickets(), model.getNumTickets());
         Long id = eventService.create(event);
         if(id == null){
             return Response.status(Response.Status.BAD_REQUEST).entity("").build();
@@ -54,10 +55,8 @@ public class EventServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response purchaseTickets(@PathParam("eventid") long eventId, String jsonRequest){
-        JsonObject jsonObject = Utils.toJsonObject(jsonRequest);
-        long userId = jsonObject.get("userid").getAsLong();
-        int numTickets = jsonObject.get("tickets").getAsInt();
-        boolean result = eventService.buyTicket(eventId, userId, numTickets);
+        TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
+        boolean result = eventService.buyTicket(eventId, ticketModel.getUserId(), ticketModel.getTickets());
         if(result){
             return Response.ok("").build();
         } else{

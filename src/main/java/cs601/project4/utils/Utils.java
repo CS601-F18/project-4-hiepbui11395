@@ -1,5 +1,6 @@
 package cs601.project4.utils;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.codec.binary.Hex;
@@ -15,7 +16,10 @@ import java.security.spec.KeySpec;
 import java.text.SimpleDateFormat;
 
 public class Utils {
-    public static SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Config.getInstance().getProperty("dateFormat"));
+    public static final SimpleDateFormat simpleDateFormat =
+            new SimpleDateFormat(Config.getInstance().getProperty("dateFormat"));
+
+    public static final Gson gson = new Gson();
 
     public static String generateSalt(){
         SecureRandom random = new SecureRandom();
@@ -53,6 +57,12 @@ public class Utils {
     public static JsonObject toJsonObject(String json){
         JsonParser parser = new JsonParser();
         JsonObject result = parser.parse(json).getAsJsonObject();
+        return result;
+    }
+
+    public static <T> T parseJsonToObject(String json, Class<T> c){
+        Gson gson = new Gson();
+        T result = gson.fromJson(json, c);
         return result;
     }
 
