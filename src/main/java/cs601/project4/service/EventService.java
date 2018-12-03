@@ -5,6 +5,7 @@ import cs601.project4.entity.Event;
 import cs601.project4.repository.EventRepository;
 import cs601.project4.utils.Config;
 import cs601.project4.utils.HttpUtils;
+import cs601.project4.utils.UserServicePath;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
@@ -37,7 +38,7 @@ public class EventService {
         Event event = eventRepository.findById(eventId);
         if (event != null && event.getNumTicketsAvail() >= numTickets) {
             eventRepository.updateAvailableTicket(event, numTickets);
-            String path = "/" + userId + "/tickets/add";
+            String path = String.format(UserServicePath.ADD_TICKET, userId);
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("eventid", eventId);
             jsonObject.addProperty("tickets", numTickets);

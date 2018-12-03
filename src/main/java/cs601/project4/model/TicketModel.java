@@ -1,11 +1,10 @@
 package cs601.project4.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.annotations.SerializedName;
 import cs601.project4.entity.Ticket;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketModel {
     @SerializedName("eventid")
     private long eventId;

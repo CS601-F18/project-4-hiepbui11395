@@ -8,6 +8,7 @@ import cs601.project4.model.TicketModel;
 import cs601.project4.service.EventService;
 import cs601.project4.utils.Config;
 import cs601.project4.utils.HttpUtils;
+import cs601.project4.utils.UserServicePath;
 import cs601.project4.utils.Utils;
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -30,7 +31,7 @@ public class EventServlet extends HttpServlet {
     public Response create(String jsonRequest) {
         EventCreateModel model = Utils.parseJsonToObject(jsonRequest, EventCreateModel.class);
         //Check if user exist by calling user service
-        String path = "/" + model.getUserId();
+        String path = String.format(UserServicePath.GET, model.getUserId());
         Response response = HttpUtils.callGetRequest(USER_SERVICE_URL, path);
         if (response.getStatus() != HttpStatus.OK_200) {
             return response;
@@ -42,13 +43,12 @@ public class EventServlet extends HttpServlet {
         if (id == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         } else {
-            JsonObject result = new JsonObject();
-            result.addProperty("eventid", id);
-            return Response.ok(result.toString()).build();
+            EventModel result = new EventModel();
+            result.setEventid(id);
+            return Response.ok(result).build();
         }
     }
 
-    //TODO: change to async
     @POST
     @Path("/purchase/{eventid}")
     @Consumes(MediaType.APPLICATION_JSON)

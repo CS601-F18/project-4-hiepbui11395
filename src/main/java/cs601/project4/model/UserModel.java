@@ -1,14 +1,14 @@
 package cs601.project4.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.annotations.SerializedName;
 import cs601.project4.entity.Ticket;
 import cs601.project4.entity.User;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-@XmlRootElement
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserModel {
     @SerializedName("userid")
     private long userId;

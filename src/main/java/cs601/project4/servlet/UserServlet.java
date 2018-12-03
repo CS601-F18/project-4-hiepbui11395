@@ -30,15 +30,15 @@ public class UserServlet {
         UserModel userModel = Utils.parseJsonToObject(jsonRequest, UserModel.class);
         //Check if username/email exist
         User user = userService.findUserByUsername(userModel.getUsername());
-        if (user == null) {
+        if (user == null && userModel.getUsername()!=null) {
             user = new User(userModel.getUsername());
             Long id = userService.create(user);
             if (id == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("").build();
             } else {
-                JsonObject result = new JsonObject();
-                result.addProperty("userid", id);
-                return Response.ok(result.toString()).build();
+                UserModel result = new UserModel();
+                result.setUserId(id);
+                return Response.ok(result).build();
             }
         } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("").build();
