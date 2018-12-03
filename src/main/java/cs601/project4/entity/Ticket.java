@@ -10,6 +10,7 @@ public class Ticket {
 
     public Ticket() {
     }
+
     public Ticket(long eventId, long userId) {
         this.eventId = eventId;
         this.userId = userId;

@@ -9,7 +9,8 @@ import java.util.Properties;
 public class Config {
     private static Properties instance;
 
-    private Config() {}
+    private Config() {
+    }
 
     public static synchronized Properties getInstance() {
         if (instance == null) {

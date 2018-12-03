@@ -1,6 +1,5 @@
 package cs601.project4.servlet;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import cs601.project4.model.EventModel;
 import cs601.project4.model.TicketModel;
@@ -25,7 +24,7 @@ public class WebFrontEndServlet extends HttpServlet {
     @GET
     @Path("/events")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEvents(){
+    public Response getEvents() {
         String path = "/list";
         return HttpUtils.callGetRequest(EVENT_SERVICE_URL, path);
     }
@@ -33,8 +32,8 @@ public class WebFrontEndServlet extends HttpServlet {
     @GET
     @Path("/events/{eventid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEvent(@PathParam("eventid") long eventId){
-        String path = "/events/"+eventId;
+    public Response getEvent(@PathParam("eventid") long eventId) {
+        String path = "/events/" + eventId;
         return HttpUtils.callGetRequest(EVENT_SERVICE_URL, path);
     }
 
@@ -52,10 +51,9 @@ public class WebFrontEndServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response purchaseTicket(@PathParam("eventid") long eventId,
-                                   @PathParam("userid") long userId,String jsonRequest){
+                                   @PathParam("userid") long userId, String jsonRequest) {
         TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
-        //TODO: Call user service to add ticket
-        String path = "/purchase/"+eventId;
+        String path = "/purchase/" + eventId;
         ticketModel.setEventId(eventId);
         ticketModel.setUserId(userId);
         return HttpUtils.callPostRequest(EVENT_SERVICE_URL, path, Utils.gson.toJson(ticketModel));
@@ -73,7 +71,7 @@ public class WebFrontEndServlet extends HttpServlet {
     @POST
     @Path("/users/{userid}/tickets/transfer")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response transferTicket(@PathParam("userid") long userId, String jsonRequest){
+    public Response transferTicket(@PathParam("userid") long userId, String jsonRequest) {
         String path = "/" + userId + "/tickets/transfer";
         return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
     }
@@ -81,17 +79,17 @@ public class WebFrontEndServlet extends HttpServlet {
     @GET
     @Path("/users/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUser(@PathParam("userid") long userId){
-        String path = "/"+userId;
+    public Response getUser(@PathParam("userid") long userId) {
+        String path = "/" + userId;
         Response response = HttpUtils.callGetRequest(USER_SERVICE_URL, path);
-        if(response.getStatus() == HttpStatus.OK_200) {
+        if (response.getStatus() == HttpStatus.OK_200) {
             UserModel userModel = response.readEntity(UserModel.class);
             List<EventModel> eventList = new ArrayList<>();
-            for(TicketModel ticket : userModel.getTickets()){
+            for (TicketModel ticket : userModel.getTickets()) {
                 response = this.getEvent(ticket.getEventId());
-                if(response.getStatus() == HttpStatus.BAD_REQUEST_400){
+                if (response.getStatus() == HttpStatus.BAD_REQUEST_400) {
                     return Response.status(HttpStatus.BAD_REQUEST_400).entity("").build();
-                } else{
+                } else {
                     EventModel eventModel = response.readEntity(EventModel.class);
                     eventList.add(eventModel);
                 }

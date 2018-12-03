@@ -14,7 +14,7 @@ public class HttpUtils {
         return response;
     }
 
-    public static Response callGetRequest(String url, String path){
+    public static Response callGetRequest(String url, String path) {
         Client client = ClientBuilder.newClient();
         WebTarget webTarget = client.target(url + path);
         Invocation.Builder invocationBuilder

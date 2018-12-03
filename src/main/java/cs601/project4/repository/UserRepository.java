@@ -4,7 +4,6 @@ import cs601.project4.entity.User;
 import cs601.project4.jdbc.ConnectionUtil;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import javax.annotation.Resource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,10 +12,11 @@ import java.sql.SQLException;
 public class UserRepository {
     private static UserRepository instance;
 
-    private UserRepository(){}
+    private UserRepository() {
+    }
 
-    public static synchronized UserRepository getInstance(){
-        if(instance == null){
+    public static synchronized UserRepository getInstance() {
+        if (instance == null) {
             instance = new UserRepository();
         }
         return instance;
@@ -27,40 +27,37 @@ public class UserRepository {
     private final String SQL_UPDATE = "update `user` set `username`=? " +
             "where `id`=?";
 
-    public User findById(long id){
+    public User findById(long id) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "select * from `user` where `id` = ?"))
-        {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "select * from `user` where `id` = ?")) {
             statement.setLong(1, id);
             return getUserResultSet(statement);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public User findByUsername(String username){
+    public User findByUsername(String username) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "select * from `user` where `username` = ?"))
-        {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "select * from `user` where `username` = ?")) {
             statement.setString(1, username);
             return getUserResultSet(statement);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public Long create(User entity){
+    public Long create(User entity) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
-                    PreparedStatement.RETURN_GENERATED_KEYS))
-        {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
+                     PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, entity.getUsername());
 
             int affectedRow = statement.executeUpdate();
@@ -73,14 +70,14 @@ public class UserRepository {
             } else {
                 return null;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
     private User getUserResultSet(PreparedStatement statement) throws SQLException {
-        try(ResultSet rs = statement.executeQuery()) {
+        try (ResultSet rs = statement.executeQuery()) {
             if (rs.next()) {
                 User user = new User(rs);
                 return user;

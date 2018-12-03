@@ -30,17 +30,17 @@ public class UserServlet {
         UserModel userModel = Utils.parseJsonToObject(jsonRequest, UserModel.class);
         //Check if username/email exist
         User user = userService.findUserByUsername(userModel.getUsername());
-        if(user==null){
+        if (user == null) {
             user = new User(userModel.getUsername());
             Long id = userService.create(user);
-            if(id==null){
+            if (id == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("").build();
-            } else{
-                JsonObject result =  new JsonObject();
+            } else {
+                JsonObject result = new JsonObject();
                 result.addProperty("userid", id);
                 return Response.ok(result.toString()).build();
             }
-        } else{
+        } else {
             return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         }
     }
@@ -48,9 +48,9 @@ public class UserServlet {
     @GET
     @Path("/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("userid") long id){
+    public Response getUserById(@PathParam("userid") long id) {
         User user = userService.findUserById(id);
-        if(user != null){
+        if (user != null) {
             List<Ticket> ticketList = ticketService.findTicketsByUserId(user.getId());
             UserModel userModel = new UserModel(user, ticketList);
             return Response.status(Response.Status.OK).entity(userModel).build();
@@ -63,10 +63,10 @@ public class UserServlet {
     @Path("/{userid}/tickets/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addTicket(@PathParam("userid") long userId, String jsonRequest){
+    public Response addTicket(@PathParam("userid") long userId, String jsonRequest) {
         //Check userId valid
         User user = userService.findUserById(userId);
-        if(user!=null){
+        if (user != null) {
             TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
             //Add tickets to user
             ticketService.addTicket(userId, ticketModel.getEventId(), ticketModel.getTickets());
@@ -78,10 +78,10 @@ public class UserServlet {
     @POST
     @Path("/{userid}/tickets/transfer")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response transferTicket(@PathParam("userid") long userId, String jsonRequest){
+    public Response transferTicket(@PathParam("userid") long userId, String jsonRequest) {
         //Check if userId valid
         TicketTransferModel model = Utils.parseJsonToObject(jsonRequest, TicketTransferModel.class);
-        if(ticketService.transferTicket(userId,model.getTargetUser(),model.getEventId(),model.getTickets())){
+        if (ticketService.transferTicket(userId, model.getTargetUser(), model.getEventId(), model.getTickets())) {
             return Response.ok("").build();
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();

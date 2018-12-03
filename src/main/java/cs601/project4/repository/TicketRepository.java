@@ -14,10 +14,11 @@ import java.util.List;
 public class TicketRepository {
     private static TicketRepository instance;
 
-    private TicketRepository(){}
+    private TicketRepository() {
+    }
 
-    public static synchronized TicketRepository getInstance(){
-        if(instance == null){
+    public static synchronized TicketRepository getInstance() {
+        if (instance == null) {
             instance = new TicketRepository();
         }
         return instance;
@@ -31,10 +32,9 @@ public class TicketRepository {
 
     public Long create(long userId, long eventId) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
-                    PreparedStatement.RETURN_GENERATED_KEYS))
-        {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
+                     PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, userId);
             statement.setLong(2, eventId);
 
@@ -42,7 +42,7 @@ public class TicketRepository {
             if (affectedRow == 0) {
                 return null;
             }
-            try(ResultSet rs = statement.getGeneratedKeys()) {
+            try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {
                     long id = rs.getLong(1);
                     return id;
@@ -50,19 +50,18 @@ public class TicketRepository {
                     return null;
                 }
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public boolean transferTicket(List<Ticket> ticketList, long userId, long targetUserId, int numTickets){
+    public boolean transferTicket(List<Ticket> ticketList, long userId, long targetUserId, int numTickets) {
         List<Ticket> updatedTicketList = new ArrayList<>();
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(SQL_UPDATE))
-        {
-            for(int i=0; i<numTickets; i++){
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
+            for (int i = 0; i < numTickets; i++) {
                 Ticket ticket = ticketList.get(i);
                 statement.setLong(1, targetUserId);
                 statement.setLong(2, ticket.getEventId());
@@ -72,7 +71,6 @@ public class TicketRepository {
             }
             return true;
         } catch (SQLException e) {
-            //TODO: if have SQLException after I already update ticket but SQLException
             e.printStackTrace();
             return false;
         }
@@ -80,13 +78,12 @@ public class TicketRepository {
 
     public List<Ticket> findTicketsByUserId(long userId) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "select * from `ticket` where `userId` = ?"))
-        {
-            statement.setLong(1,userId);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "select * from `ticket` where `userId` = ?")) {
+            statement.setLong(1, userId);
             return getTicketsResultSet(statement);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -94,21 +91,20 @@ public class TicketRepository {
 
     public List<Ticket> findTicketsByUserIdAndEventId(long userId, long eventId) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "select * from `ticket` where `userId` = ? and `eventId`=?"))
-        {
-            statement.setLong(1,userId);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "select * from `ticket` where `userId` = ? and `eventId`=?")) {
+            statement.setLong(1, userId);
             statement.setLong(2, eventId);
             return getTicketsResultSet(statement);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
     private List<Ticket> getTicketsResultSet(PreparedStatement statement) throws SQLException {
-        try(ResultSet rs = statement.executeQuery()) {
+        try (ResultSet rs = statement.executeQuery()) {
             List<Ticket> ticketList = new ArrayList<>();
             while (rs.next()) {
                 Ticket ticket = new Ticket(rs);

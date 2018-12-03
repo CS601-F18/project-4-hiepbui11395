@@ -17,32 +17,32 @@ public class EventService {
     private EventRepository eventRepository = EventRepository.getInstace();
 
     public static synchronized EventService getInstance() {
-        if(instance == null){
+        if (instance == null) {
             instance = new EventService();
         }
         return instance;
     }
 
-    public Long create(Event event){
+    public Long create(Event event) {
         Event result = eventRepository.create(event);
         return result.getId();
     }
 
-    public Event findById(long id){
+    public Event findById(long id) {
         Event result = eventRepository.findById(id);
         return result;
     }
 
-    public boolean buyTicket(long eventId, long userId, int numTickets){
+    public boolean buyTicket(long eventId, long userId, int numTickets) {
         Event event = eventRepository.findById(eventId);
-        if(event != null && event.getNumTicketsAvail()>= numTickets){
+        if (event != null && event.getNumTicketsAvail() >= numTickets) {
             eventRepository.updateAvailableTicket(event, numTickets);
             String path = "/" + userId + "/tickets/add";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("eventid", eventId);
             jsonObject.addProperty("tickets", numTickets);
             Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonObject.toString());
-            if(response.getStatus()== HttpStatus.OK_200){
+            if (response.getStatus() == HttpStatus.OK_200) {
                 return true;
             }
             eventRepository.updateAvailableTicket(event, -numTickets);
@@ -50,7 +50,7 @@ public class EventService {
         return false;
     }
 
-    public List<Event> gets(){
+    public List<Event> gets() {
         return eventRepository.gets();
     }
 }

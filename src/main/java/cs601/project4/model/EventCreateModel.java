@@ -2,6 +2,9 @@ package cs601.project4.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class EventCreateModel {
     @SerializedName("eventname")
     private String eventName;

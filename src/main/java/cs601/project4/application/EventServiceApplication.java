@@ -9,7 +9,7 @@ import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 public class EventServiceApplication {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         Server server = new Server(Integer.parseInt(Config.getInstance().getProperty("eventPort")));
 
@@ -27,8 +27,9 @@ public class EventServiceApplication {
         try {
             server.start();
             server.join();
-        }finally {
-
+        } catch (Exception e){
+            e.printStackTrace();
+            server.stop();
             server.destroy();
         }
     }

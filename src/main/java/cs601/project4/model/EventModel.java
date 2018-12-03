@@ -3,6 +3,9 @@ package cs601.project4.model;
 import com.google.gson.annotations.SerializedName;
 import cs601.project4.entity.Event;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class EventModel {
     @SerializedName("eventid")
     private Long eventId;
@@ -28,7 +31,7 @@ public class EventModel {
         this.purchased = purchased;
     }
 
-    public EventModel(Event event){
+    public EventModel(Event event) {
         this.eventId = event.getId();
         this.eventName = event.getName();
         this.userId = event.getUserId();

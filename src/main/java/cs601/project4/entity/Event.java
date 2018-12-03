@@ -2,8 +2,6 @@ package cs601.project4.entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Date;
 
 public class Event {
     private Long id;

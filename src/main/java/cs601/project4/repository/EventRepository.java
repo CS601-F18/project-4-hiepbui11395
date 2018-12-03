@@ -4,7 +4,6 @@ import cs601.project4.entity.Event;
 import cs601.project4.jdbc.ConnectionUtil;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import javax.xml.ws.Response;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +15,7 @@ public class EventRepository {
     private static EventRepository instance;
 
     public static synchronized EventRepository getInstace() {
-        if(instance == null){
+        if (instance == null) {
             instance = new EventRepository();
         }
         return instance;
@@ -28,40 +27,38 @@ public class EventRepository {
     private final String SQL_UPDATE = "update `event` set `userId`=?,`name`=?,`numTickets`=?,`numTicketsAvail`=? " +
             "where `id`=?";
 
-    public List<Event> gets(){
+    public List<Event> gets() {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                    "select * from `event`"))
-        {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "select * from `event`")) {
             List<Event> eventList = new ArrayList<>();
             ResultSet rs = statement.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 eventList.add(new Event(rs));
             }
             return eventList;
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public Event create(Event entity){
+    public Event create(Event entity) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
-                    PreparedStatement.RETURN_GENERATED_KEYS))
-        {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_INSERT,
+                     PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, entity.getUserId());
             statement.setString(2, entity.getName());
             statement.setInt(3, entity.getNumTickets());
             statement.setInt(4, entity.getNumTicketsAvail());
 
             int affectedRow = statement.executeUpdate();
-            if(affectedRow == 0){
+            if (affectedRow == 0) {
                 return null;
             }
-            try(ResultSet rs = statement.getGeneratedKeys()) {
+            try (ResultSet rs = statement.getGeneratedKeys()) {
                 if (rs.next()) {
                     entity.setId(rs.getLong(1));
                     return entity;
@@ -69,7 +66,7 @@ public class EventRepository {
                     return null;
                 }
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -77,15 +74,15 @@ public class EventRepository {
 
     /**
      * Update number of available ticket in db
+     *
      * @param entity
      * @param numTickets
      * @throws SQLException
      */
-    public void updateAvailableTicket(Event entity, int numTickets){
+    public void updateAvailableTicket(Event entity, int numTickets) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(SQL_UPDATE))
-        {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_UPDATE)) {
             statement.setLong(1, entity.getUserId());
             statement.setString(2, entity.getName());
             statement.setInt(3, entity.getNumTickets());
@@ -93,19 +90,18 @@ public class EventRepository {
             statement.setLong(5, entity.getId());
             statement.executeUpdate();
             entity.setNumTicketsAvail(entity.getNumTicketsAvail() - numTickets);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public Event findById(long id) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
-        try(Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(
-                        "select * from `event` where `id` = ?"))
-        {
-            statement.setLong(1,id);
-            try(ResultSet rs = statement.executeQuery()){
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "select * from `event` where `id` = ?")) {
+            statement.setLong(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
                     Event event = new Event(rs);
                     return event;
@@ -113,7 +109,7 @@ public class EventRepository {
                     return null;
                 }
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }

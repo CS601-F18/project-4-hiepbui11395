@@ -11,8 +11,8 @@ import java.util.Properties;
 public class MySqlConnectionUtils {
     private static BasicDataSource dataSource;
 
-    public static synchronized BasicDataSource getDataSource(){
-        if(dataSource == null){
+    public static synchronized BasicDataSource getDataSource() {
+        if (dataSource == null) {
 
             Properties config = Config.getInstance();
             String hostName = config.getProperty("hostname");
@@ -22,7 +22,8 @@ public class MySqlConnectionUtils {
             String password = config.getProperty("dbpassword");
             String timeZoneSettings = "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
             dataSource = new BasicDataSource();
-            dataSource.setUrl("jdbc:mysql://" + hostName +  ":" + port + "/" + dbName + timeZoneSettings);
+            System.out.println("\t Database connection: " + "jdbc:mysql://" + hostName + ":" + port + "/" + dbName);
+            dataSource.setUrl("jdbc:mysql://" + hostName + ":" + port + "/" + dbName + timeZoneSettings);
             dataSource.setUsername(userName);
             dataSource.setPassword(password);
 
@@ -32,12 +33,14 @@ public class MySqlConnectionUtils {
         }
         return dataSource;
     }
+
     /**
      * Init the variable for My SQL Connection
+     *
      * @return
      * @throws SQLException
      */
-    public static Connection getConnection() throws SQLException{
+    public static Connection getConnection() throws SQLException {
 
         Properties config = Config.getInstance();
         String hostName = config.getProperty("hostname");
@@ -50,7 +53,6 @@ public class MySqlConnectionUtils {
     }
 
     /**
-     *
      * @param hostName
      * @param schema
      * @param username
@@ -60,14 +62,14 @@ public class MySqlConnectionUtils {
      */
     private static Connection getConnection(String hostName, int port, String schema,
                                             String username, String password)
-            throws SQLException{
+            throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             System.out.println("Can not find driver!");
             e.printStackTrace();
         }
-        String connectionUrl = "jdbc:mysql://" + hostName +  ":" + port + "/" + schema;
+        String connectionUrl = "jdbc:mysql://" + hostName + ":" + port + "/" + schema;
         //Must set time zone explicitly in newer versions of mySQL.
         String timeZoneSettings = "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
         Connection connection = DriverManager.getConnection(connectionUrl + timeZoneSettings,
