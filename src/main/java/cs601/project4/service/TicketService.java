@@ -39,7 +39,7 @@ public class TicketService {
         }
     }
 
-    public boolean transferTicket(long userId, long targetUserId, long eventId, int numTickets) {
+    public synchronized boolean transferTicket(long userId, long targetUserId, long eventId, int numTickets) {
         User user = userRepository.findById(userId);
         User targetUser = userRepository.findById(targetUserId);
         if (user != null && targetUser != null) {

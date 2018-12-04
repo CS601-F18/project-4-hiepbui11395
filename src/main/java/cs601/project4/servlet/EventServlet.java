@@ -1,6 +1,5 @@
 package cs601.project4.servlet;
 
-import com.google.gson.JsonObject;
 import cs601.project4.entity.Event;
 import cs601.project4.model.EventCreateModel;
 import cs601.project4.model.EventModel;
@@ -10,6 +9,7 @@ import cs601.project4.utils.Config;
 import cs601.project4.utils.HttpUtils;
 import cs601.project4.utils.UserServicePath;
 import cs601.project4.utils.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.http.HttpStatus;
 
 import javax.servlet.http.HttpServlet;
@@ -29,51 +29,61 @@ public class EventServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(String jsonRequest) {
-        EventCreateModel model = Utils.parseJsonToObject(jsonRequest, EventCreateModel.class);
-        //Check if user exist by calling user service
-        String path = String.format(UserServicePath.GET, model.getUserId());
-        Response response = HttpUtils.callGetRequest(USER_SERVICE_URL, path);
-        if (response.getStatus() != HttpStatus.OK_200) {
-            return response;
-        }
+        if(Utils.checkJsonEnoughKey(jsonRequest,new String[] {"",""})) {
+            EventCreateModel model = Utils.parseJsonToObject(jsonRequest, EventCreateModel.class);
+            if (model != null) {
+                //Check if user exist by calling user service
+                String path = String.format(UserServicePath.GET, model.getUserId());
+                Response response = HttpUtils.callGetRequest(USER_SERVICE_URL, path);
+                if (response.getStatus() != HttpStatus.OK_200) {
+                    return response;
+                }
 
-        Event event = new Event(model.getUserId(), model.getEventName(),
-                model.getNumTickets(), model.getNumTickets());
-        Long id = eventService.create(event);
-        if (id == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
-        } else {
-            EventModel result = new EventModel();
-            result.setEventid(id);
-            return Response.ok(result).build();
+                Event event = new Event(model.getUserId(), model.getEventName(),
+                        model.getNumTickets(), model.getNumTickets());
+                Long id = eventService.create(event);
+                if (id != null) {
+                    EventModel result = new EventModel();
+                    result.setEventid(id);
+                    return Response.ok(result).build();
+                }
+            }
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
     @POST
     @Path("/purchase/{eventid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response purchaseTickets(@PathParam("eventid") long eventId, String jsonRequest) {
-        TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
-        boolean result = eventService.buyTicket(eventId, ticketModel.getUserId(), ticketModel.getTickets());
-        if (result) {
-            return Response.ok("").build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
+    public Response purchaseTickets(@PathParam("eventid") String eventId, String jsonRequest) {
+        if(StringUtils.isNumeric(eventId) &&
+                Utils.checkJsonEnoughKey(jsonRequest, new String[]{"userid","eventid","ticket"})){
+            long id = Long.parseLong(eventId);
+            TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
+            if(ticketModel!=null) {
+                boolean result = eventService.buyTicket(id, ticketModel.getUserId(), ticketModel.getTickets());
+                if (result) {
+                    return Response.ok("").build();
+                }
+            }
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
     @GET
-    @Path("/events/{eventid}")
+    @Path("/{eventid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response detail(@PathParam("eventid") long eventId) {
-        Event event = eventService.findById(eventId);
-        if (event != null) {
-            EventModel eventModel = new EventModel(event);
-            return Response.ok().entity(eventModel).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
+    public Response detail(@PathParam("eventid") String eventId) {
+        if(StringUtils.isNumeric(eventId)) {
+            long id = Long.parseLong(eventId);
+            Event event = eventService.findById(id);
+            if (event != null) {
+                EventModel eventModel = new EventModel(event);
+                return Response.ok().entity(eventModel).build();
+            }
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
     @GET

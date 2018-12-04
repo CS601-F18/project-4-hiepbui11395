@@ -10,6 +10,7 @@ import cs601.project4.service.TicketService;
 import cs601.project4.service.UserService;
 import cs601.project4.utils.Config;
 import cs601.project4.utils.Utils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -27,50 +28,62 @@ public class UserServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(String jsonRequest) {
-        UserModel userModel = Utils.parseJsonToObject(jsonRequest, UserModel.class);
-        //Check if username/email exist
-        User user = userService.findUserByUsername(userModel.getUsername());
-        if (user == null && userModel.getUsername()!=null) {
-            user = new User(userModel.getUsername());
-            Long id = userService.create(user);
-            if (id == null) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("").build();
-            } else {
-                UserModel result = new UserModel();
-                result.setUserId(id);
-                return Response.ok(result).build();
+        if(Utils.checkJsonEnoughKey(jsonRequest, new String[]{"username"})) {
+            UserModel userModel = Utils.parseJsonToObject(jsonRequest, UserModel.class);
+            if (userModel != null) {
+                //Check if username/email exist
+                User user = userService.findUserByUsername(userModel.getUsername());
+                if (user == null && userModel.getUsername() != null) {
+                    user = new User(userModel.getUsername());
+                    Long id = userService.create(user);
+                    if (id == null) {
+                        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
+                    } else {
+                        UserModel result = new UserModel();
+                        result.setUserId(id);
+                        return Response.ok(result).build();
+                    }
+                }
             }
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
     @GET
     @Path("/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("userid") long id) {
-        User user = userService.findUserById(id);
-        if (user != null) {
-            List<Ticket> ticketList = ticketService.findTicketsByUserId(user.getId());
-            UserModel userModel = new UserModel(user, ticketList);
-            return Response.status(Response.Status.OK).entity(userModel).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("").build();
+    public Response getUserById(@PathParam("userid") String userId) {
+        if(StringUtils.isNumeric(userId)){
+            long id = Long.parseLong(userId);
+            User user = userService.findUserById(id);
+            if (user != null) {
+                List<Ticket> ticketList = ticketService.findTicketsByUserId(user.getId());
+                UserModel userModel = new UserModel(user, ticketList);
+                return Response.status(Response.Status.OK).entity(userModel).build();
+            }
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
     @POST
     @Path("/{userid}/tickets/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addTicket(@PathParam("userid") long userId, String jsonRequest) {
-        //Check userId valid
-        User user = userService.findUserById(userId);
-        if (user != null) {
-            TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
-            //Add tickets to user
-            ticketService.addTicket(userId, ticketModel.getEventId(), ticketModel.getTickets());
-            return Response.ok("").build();
+    public Response addTicket(@PathParam("userid") String userId, String jsonRequest) {
+        if(Utils.checkJsonEnoughKey(jsonRequest, new String[]{"eventid","tickets"})) {
+            if (StringUtils.isNumeric(userId)) {
+                long id = Long.parseLong(userId);
+                //Check userId valid
+                User user = userService.findUserById(id);
+                if (user != null) {
+                    TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
+                    if (ticketModel != null) {
+                        //Add tickets to user
+                        ticketService.addTicket(id, ticketModel.getEventId(), ticketModel.getTickets());
+                        return Response.ok("").build();
+                    }
+                }
+            }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
@@ -78,11 +91,18 @@ public class UserServlet {
     @POST
     @Path("/{userid}/tickets/transfer")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response transferTicket(@PathParam("userid") long userId, String jsonRequest) {
-        //Check if userId valid
-        TicketTransferModel model = Utils.parseJsonToObject(jsonRequest, TicketTransferModel.class);
-        if (ticketService.transferTicket(userId, model.getTargetUser(), model.getEventId(), model.getTickets())) {
-            return Response.ok("").build();
+    public Response transferTicket(@PathParam("userid") String userId, String jsonRequest) {
+        if(Utils.checkJsonEnoughKey(jsonRequest, new String[]{"eventid","tickets","targetuser"})) {
+            if (StringUtils.isNumeric(userId)) {
+                long id = Long.parseLong(userId);
+                //Check if userId valid
+                TicketTransferModel model = Utils.parseJsonToObject(jsonRequest, TicketTransferModel.class);
+                if (model != null) {
+                    if (ticketService.transferTicket(id, model.getTargetUser(), model.getEventId(), model.getTickets())) {
+                        return Response.ok("").build();
+                    }
+                }
+            }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
