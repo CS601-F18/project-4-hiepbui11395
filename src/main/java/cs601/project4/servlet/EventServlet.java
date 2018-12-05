@@ -95,6 +95,10 @@ public class EventServlet extends HttpServlet {
         for (int i = 0; i < eventList.size(); i++) {
             eventModelList.add(new EventModel(eventList.get(i)));
         }
-        return Response.ok().entity(eventModelList).build();
+        if(eventModelList.size()!=0) {
+            return Response.ok().entity(eventModelList).build();
+        } else{
+            return Response.status(HttpStatus.BAD_REQUEST_400).entity("").build();
+        }
     }
 }
