@@ -14,6 +14,8 @@ import java.util.List;
 public class EventService {
     private static EventService instance;
 
+    private EventService(){}
+
     private final String USER_SERVICE_URL = Config.getInstance().getProperty("userUrl");
     private EventRepository eventRepository = EventRepository.getInstace();
 

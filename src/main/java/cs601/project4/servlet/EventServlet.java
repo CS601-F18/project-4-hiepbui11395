@@ -29,7 +29,7 @@ public class EventServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(String jsonRequest) {
-        if(Utils.checkJsonEnoughKey(jsonRequest,new String[] {"",""})) {
+        if(Utils.checkJsonEnoughKey(jsonRequest,new String[] {"userid","eventname","numtickets"})) {
             EventCreateModel model = Utils.parseJsonToObject(jsonRequest, EventCreateModel.class);
             if (model != null) {
                 //Check if user exist by calling user service
@@ -58,10 +58,10 @@ public class EventServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response purchaseTickets(@PathParam("eventid") String eventId, String jsonRequest) {
         if(StringUtils.isNumeric(eventId) &&
-                Utils.checkJsonEnoughKey(jsonRequest, new String[]{"userid","eventid","ticket"})){
+                Utils.checkJsonEnoughKey(jsonRequest, new String[]{"userid","eventid","tickets"})){
             long id = Long.parseLong(eventId);
             TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
-            if(ticketModel!=null) {
+            if(ticketModel!=null && ticketModel.getEventId() == id) {
                 boolean result = eventService.buyTicket(id, ticketModel.getUserId(), ticketModel.getTickets());
                 if (result) {
                     return Response.ok("").build();

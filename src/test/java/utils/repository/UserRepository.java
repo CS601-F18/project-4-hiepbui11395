@@ -11,8 +11,7 @@ import java.sql.SQLException;
 public class UserRepository {
     private static UserRepository instance;
 
-    private UserRepository() {
-    }
+    private UserRepository() { }
 
     public static synchronized UserRepository getInstance() {
         if (instance == null) {

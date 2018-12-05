@@ -8,20 +8,21 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TicketRepository {
-    private static TicketRepository instance;
+public class EventRepository {
+    private static EventRepository instance;
 
-    private TicketRepository(){}
+    private EventRepository(){}
 
-    public static synchronized TicketRepository getInstance() {
+    public static synchronized EventRepository getInstance(){
         if(instance==null){
-            instance = new TicketRepository();
+            instance = new EventRepository();
         }
         return instance;
     }
 
-    private final String SQL_DELETE = "delete from `ticket`";
-    private final String SQL_COUNT = "select count(*) from `ticket`";
+
+    private final String SQL_DELETE = "delete from `event`";
+    private final String SQL_COUNT = "select count(*) from `event`";
 
     public void deleteAll(){
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();

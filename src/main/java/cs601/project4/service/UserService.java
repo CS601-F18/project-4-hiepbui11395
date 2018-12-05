@@ -7,8 +7,7 @@ public class UserService {
     private UserRepository userRepository = UserRepository.getInstance();
     private static UserService instance;
 
-    private UserService() {
-    }
+    private UserService() { }
 
     public static synchronized UserService getInstance() {
         if (instance == null) {

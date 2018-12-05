@@ -14,6 +14,8 @@ import java.util.List;
 public class EventRepository {
     private static EventRepository instance;
 
+    private EventRepository(){}
+
     public static synchronized EventRepository getInstace() {
         if (instance == null) {
             instance = new EventRepository();

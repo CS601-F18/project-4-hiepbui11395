@@ -13,8 +13,7 @@ public class TicketService {
 
     private static TicketService instance;
 
-    private TicketService() {
-    }
+    private TicketService() { }
 
     public static synchronized TicketService getInstance() {
         if (instance == null) {

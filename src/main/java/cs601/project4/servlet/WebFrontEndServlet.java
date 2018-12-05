@@ -44,8 +44,12 @@ public class WebFrontEndServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createEvent(String jsonRequest) {
-        String path = EventServicePath.CREATE;
-        return HttpUtils.callPostRequest(EVENT_SERVICE_URL, path, jsonRequest);
+        if(Utils.checkJsonEnoughKey(jsonRequest,
+                new String[] {"userid","eventname","numtickets"})) {
+            String path = EventServicePath.CREATE;
+            return HttpUtils.callPostRequest(EVENT_SERVICE_URL, path, jsonRequest);
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
     @POST
@@ -54,7 +58,8 @@ public class WebFrontEndServlet extends HttpServlet {
     @Produces(MediaType.APPLICATION_JSON)
     public Response purchaseTicket(@PathParam("eventid") String eventId,
                                    @PathParam("userid") String userId, String jsonRequest) {
-        if(StringUtils.isNumeric(eventId) && StringUtils.isNumeric(userId)) {
+        if(StringUtils.isNumeric(eventId) && StringUtils.isNumeric(userId)
+                && Utils.checkJsonEnoughKey(jsonRequest, new String[]{"tickets"})) {
             TicketModel ticketModel = Utils.parseJsonToObject(jsonRequest, TicketModel.class);
             if (ticketModel != null) {
                 String path = String.format(EventServicePath.PURCHASE_TICKET, eventId);
@@ -71,15 +76,20 @@ public class WebFrontEndServlet extends HttpServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(String jsonRequest) {
-        String path = UserServicePath.CREATE;
-        return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
+        if(Utils.checkJsonEnoughKey(jsonRequest,
+                new String[]{"username"})) {
+            String path = UserServicePath.CREATE;
+            return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
     @POST
     @Path("/users/{userid}/tickets/transfer")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response transferTicket(@PathParam("userid") String userId, String jsonRequest) {
-        if(StringUtils.isNumeric(userId)) {
+        if(StringUtils.isNumeric(userId)
+                && Utils.checkJsonEnoughKey(jsonRequest, new String[]{"eventid","tickets","targetuser"})) {
             String path = String.format(UserServicePath.TRANSFER_TICKET, userId);
             return HttpUtils.callPostRequest(USER_SERVICE_URL, path, jsonRequest);
         }
@@ -99,7 +109,7 @@ public class WebFrontEndServlet extends HttpServlet {
                 for (TicketModel ticket : userModel.getTickets()) {
                     response = this.getEvent(String.valueOf(ticket.getEventId()));
                     if (response.getStatus() == HttpStatus.BAD_REQUEST_400) {
-                        return Response.status(HttpStatus.BAD_REQUEST_400).entity("").build();
+                        return response;
                     } else {
                         EventModel eventModel = response.readEntity(EventModel.class);
                         eventList.add(eventModel);
