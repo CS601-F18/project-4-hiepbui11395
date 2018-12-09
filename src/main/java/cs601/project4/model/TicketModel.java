@@ -9,12 +9,12 @@ import javax.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketModel {
     @SerializedName("eventid")
-    private long eventId;
+    private Long eventId;
 
     @SerializedName("userid")
-    private long userId;
+    private Long userId;
 
-    private int tickets;
+    private Integer tickets;
 
     public TicketModel(long eventId) {
         this.eventId = eventId;
@@ -27,27 +27,27 @@ public class TicketModel {
         this.eventId = ticket.getEventId();
     }
 
-    public long getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(long eventid) {
-        this.eventId = eventid;
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 
-    public int getTickets() {
+    public Integer getTickets() {
         return tickets;
     }
 
-    public void setTickets(int tickets) {
+    public void setTickets(Integer tickets) {
         this.tickets = tickets;
     }
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 }

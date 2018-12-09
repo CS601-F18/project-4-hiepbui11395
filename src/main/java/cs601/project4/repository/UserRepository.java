@@ -24,9 +24,12 @@ public class UserRepository {
 
     private final String SQL_INSERT = "insert into `user` (`username`)" +
             "values (?)";
-    private final String SQL_UPDATE = "update `user` set `username`=? " +
-            "where `id`=?";
 
+    /**
+     * Find user by user id
+     * @param id
+     * @return User entity or null
+     */
     public User findById(long id) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();
@@ -40,6 +43,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * Find user by username
+     * @param username
+     * @return User entity or null
+     */
     public User findByUsername(String username) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();
@@ -53,6 +61,11 @@ public class UserRepository {
         }
     }
 
+    /**
+     * Add User into db
+     * @param entity
+     * @return UserId or null
+     */
     public Long create(User entity) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();
@@ -76,6 +89,12 @@ public class UserRepository {
         }
     }
 
+    /**
+     * Parse result set into User
+     * @param statement
+     * @return
+     * @throws SQLException
+     */
     private User getUserResultSet(PreparedStatement statement) throws SQLException {
         try (ResultSet rs = statement.executeQuery()) {
             if (rs.next()) {

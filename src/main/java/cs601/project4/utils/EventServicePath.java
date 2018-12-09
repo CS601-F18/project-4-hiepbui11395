@@ -1,5 +1,8 @@
 package cs601.project4.utils;
 
+/**
+ * Path of event service
+ */
 public class EventServicePath {
     public static final String CREATE ="/create";
 

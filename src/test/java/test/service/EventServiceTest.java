@@ -1,12 +1,14 @@
 package test.service;
 
 import com.google.gson.JsonObject;
+import cs601.project4.entity.Event;
 import cs601.project4.model.EventModel;
 import cs601.project4.model.UserModel;
 import cs601.project4.utils.*;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import utils.repository.EventRepository;
 import utils.repository.TicketRepository;
@@ -29,7 +31,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event
         request = new JsonObject();
@@ -90,7 +93,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event
         request = new JsonObject();
@@ -119,7 +123,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event
         request = new JsonObject();
@@ -128,7 +133,8 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel = response.readEntity(EventModel.class);
+        EventModel eventModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
         Assert.assertEquals(response.getStatus(), HttpStatus.OK_200);
         Assert.assertEquals(eventRepository.count(), 1);
 
@@ -144,7 +150,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event
         request = new JsonObject();
@@ -153,7 +160,8 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel = response.readEntity(EventModel.class);
+        EventModel eventModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
         Assert.assertEquals(response.getStatus(), HttpStatus.OK_200);
         Assert.assertEquals(eventRepository.count(), 1);
 
@@ -169,7 +177,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event
         request = new JsonObject();
@@ -178,7 +187,8 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel = response.readEntity(EventModel.class);
+        EventModel eventModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
         Assert.assertEquals(response.getStatus(), HttpStatus.OK_200);
         Assert.assertEquals(eventRepository.count(), 1);
 
@@ -194,7 +204,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event
         request = new JsonObject();
@@ -203,7 +214,8 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel = response.readEntity(EventModel.class);
+        EventModel eventModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
 
         //Purchase tickets
         request = new JsonObject();
@@ -214,6 +226,16 @@ public class EventServiceTest {
                 String.format(EventServicePath.PURCHASE_TICKET, eventModel.getEventid()),
                 Utils.gson.toJson(request));
         Assert.assertEquals(response.getStatus(), HttpStatus.OK_200);
+
+        //Exceed amount after buy 5 tickets
+        request = new JsonObject();
+        request.addProperty("userid", userModel.getUserId());
+        request.addProperty("eventid", eventModel.getEventid());
+        request.addProperty("tickets", 6);
+        response = HttpUtils.callPostRequest(EVENT_SERVICE_URL,
+                String.format(EventServicePath.PURCHASE_TICKET, eventModel.getEventid()),
+                Utils.gson.toJson(request));
+        Assert.assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST_400);
     }
 
     @Test
@@ -223,7 +245,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event 1
         request = new JsonObject();
@@ -232,12 +255,13 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel = response.readEntity(EventModel.class);
+        EventModel eventModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
 
         //Purchase tickets
         request = new JsonObject();
-        request.addProperty("userid", userModel.getUserId() +1);
-        request.addProperty("eventid", eventModel.getEventid() + 1);
+        request.addProperty("userid", userModel.getUserId());
+        request.addProperty("eventid", eventModel.getEventid());
         request.addProperty("tickets", 5);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL,
                 String.format(EventServicePath.PURCHASE_TICKET, "abc"),
@@ -252,7 +276,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event 1
         request = new JsonObject();
@@ -261,12 +286,13 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel = response.readEntity(EventModel.class);
+        EventModel eventModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
 
         //Purchase tickets
         request = new JsonObject();
         request.addProperty("userid", userModel.getUserId() +1);
-        request.addProperty("eventid", eventModel.getEventid() + 1);
+        request.addProperty("eventid", eventModel.getEventid());
         request.addProperty("tickets", 5);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL,
                 String.format(EventServicePath.PURCHASE_TICKET, eventModel.getEventid()),
@@ -281,7 +307,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event 1
         request = new JsonObject();
@@ -290,7 +317,8 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel1 = response.readEntity(EventModel.class);
+        EventModel eventModel1 = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
 
 
         //Create event 2
@@ -300,7 +328,8 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel2 = response.readEntity(EventModel.class);
+        EventModel eventModel2 = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
 
         //Purchase tickets 1
         request = new JsonObject();
@@ -331,7 +360,8 @@ public class EventServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create event
         request = new JsonObject();
@@ -340,7 +370,8 @@ public class EventServiceTest {
         request.addProperty("numtickets", 10);
         response = HttpUtils.callPostRequest(EVENT_SERVICE_URL, EventServicePath.CREATE,
                 Utils.gson.toJson(request));
-        EventModel eventModel = response.readEntity(EventModel.class);
+        EventModel eventModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), EventModel.class);
 
         //Purchase tickets
         request = new JsonObject();
@@ -353,7 +384,7 @@ public class EventServiceTest {
         Assert.assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST_400);
     }
 
-    @After
+    @Before
     public void cleanTable(){
         eventRepository.deleteAll();
         ticketRepository.deleteAll();

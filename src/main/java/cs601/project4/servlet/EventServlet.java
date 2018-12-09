@@ -1,5 +1,6 @@
 package cs601.project4.servlet;
 
+import com.google.gson.Gson;
 import cs601.project4.entity.Event;
 import cs601.project4.model.EventCreateModel;
 import cs601.project4.model.EventModel;
@@ -24,6 +25,13 @@ public class EventServlet extends HttpServlet {
     private EventService eventService = EventService.getInstance();
     private final String USER_SERVICE_URL = Config.getInstance().getProperty("userUrl");
 
+    Gson gson = new Gson();
+
+    /**
+     * Handle a request to create new event
+     * @param jsonRequest
+     * @return
+     */
     @POST
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -45,13 +53,19 @@ public class EventServlet extends HttpServlet {
                 if (id != null) {
                     EventModel result = new EventModel();
                     result.setEventid(id);
-                    return Response.ok(result).build();
+                    return Response.ok(gson.toJson(result)).build();
                 }
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
+    /**
+     * Handle a request to purchase ticket
+     * @param eventId
+     * @param jsonRequest
+     * @return
+     */
     @POST
     @Path("/purchase/{eventid}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -71,6 +85,11 @@ public class EventServlet extends HttpServlet {
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
+    /**
+     * Handle a request to get a specific event from event id
+     * @param eventId
+     * @return
+     */
     @GET
     @Path("/{eventid}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -80,12 +99,16 @@ public class EventServlet extends HttpServlet {
             Event event = eventService.findById(id);
             if (event != null) {
                 EventModel eventModel = new EventModel(event);
-                return Response.ok().entity(eventModel).build();
+                return Response.ok().entity(gson.toJson(eventModel)).build();
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
+    /**
+     * Handle a request to get list of events
+     * @return
+     */
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
@@ -96,7 +119,7 @@ public class EventServlet extends HttpServlet {
             eventModelList.add(new EventModel(eventList.get(i)));
         }
         if(eventModelList.size()!=0) {
-            return Response.ok().entity(eventModelList).build();
+            return Response.ok().entity(gson.toJson(eventModelList)).build();
         } else{
             return Response.status(HttpStatus.BAD_REQUEST_400).entity("").build();
         }

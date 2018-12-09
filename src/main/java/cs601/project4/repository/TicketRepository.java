@@ -30,6 +30,12 @@ public class TicketRepository {
     private final String SQL_UPDATE = "update `ticket` set `userId`=?,`eventId`=? " +
             "where `id`=?";
 
+    /**
+     * Add ticket to db
+     * @param userId
+     * @param eventId
+     * @return ticket entity or null if can not add
+     */
     public Long create(long userId, long eventId) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();
@@ -76,6 +82,11 @@ public class TicketRepository {
         }
     }
 
+    /**
+     * Find ticket by userId
+     * @param userId
+     * @return list of Tickets
+     */
     public List<Ticket> findTicketsByUserId(long userId) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();
@@ -89,6 +100,12 @@ public class TicketRepository {
         }
     }
 
+    /**
+     * Find ticket by user id and event id
+     * @param userId
+     * @param eventId
+     * @return list of Tickets
+     */
     public List<Ticket> findTicketsByUserIdAndEventId(long userId, long eventId) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();
@@ -103,6 +120,12 @@ public class TicketRepository {
         }
     }
 
+    /**
+     * Parse result set into list ticket
+     * @param statement
+     * @return
+     * @throws SQLException
+     */
     private List<Ticket> getTicketsResultSet(PreparedStatement statement) throws SQLException {
         try (ResultSet rs = statement.executeQuery()) {
             List<Ticket> ticketList = new ArrayList<>();

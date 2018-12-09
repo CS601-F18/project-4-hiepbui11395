@@ -6,43 +6,43 @@ import com.google.gson.annotations.SerializedName;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TicketTransferModel {
     @SerializedName("eventid")
-    private long eventId;
+    private Long eventId;
 
-    private int tickets;
+    private Integer tickets;
 
     @SerializedName("targetuser")
-    private long targetUser;
+    private Long targetUser;
 
     public TicketTransferModel() {
     }
 
-    public TicketTransferModel(long eventId, int tickets, long targetUser) {
+    public TicketTransferModel(Long eventId, int tickets, Long targetUser) {
         this.eventId = eventId;
         this.tickets = tickets;
         this.targetUser = targetUser;
     }
 
-    public long getEventId() {
+    public Long getEventId() {
         return eventId;
     }
 
-    public void setEventId(long eventId) {
+    public void setEventId(Long eventId) {
         this.eventId = eventId;
     }
 
-    public int getTickets() {
+    public Integer getTickets() {
         return tickets;
     }
 
-    public void setTickets(int tickets) {
+    public void setTickets(Integer tickets) {
         this.tickets = tickets;
     }
 
-    public long getTargetUser() {
+    public Long getTargetUser() {
         return targetUser;
     }
 
-    public void setTargetUser(long targetUser) {
+    public void setTargetUser(Long targetUser) {
         this.targetUser = targetUser;
     }
 }

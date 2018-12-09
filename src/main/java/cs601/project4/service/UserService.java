@@ -16,16 +16,31 @@ public class UserService {
         return instance;
     }
 
+    /**
+     * Add user into db
+     * @param user
+     * @return UserId or null
+     */
     public Long create(User user) {
         Long result = userRepository.create(user);
         return result;
     }
 
+    /**
+     * Get user by user id
+     * @param id
+     * @return User entity or null
+     */
     public User findUserById(long id) {
         User user = userRepository.findById(id);
         return user;
     }
 
+    /**
+     * Get user by username
+     * @param username
+     * @return User entity or null
+     */
     public User findUserByUsername(String username) {
         User user = userRepository.findByUsername(username);
         return user;

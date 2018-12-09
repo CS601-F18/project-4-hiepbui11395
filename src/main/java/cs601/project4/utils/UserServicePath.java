@@ -1,5 +1,8 @@
 package cs601.project4.utils;
 
+/**
+ * Path of user service
+ */
 public class UserServicePath {
     public static final String CREATE ="/create";
 

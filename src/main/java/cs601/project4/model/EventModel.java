@@ -13,16 +13,16 @@ public class EventModel {
     private String eventName;
 
     @SerializedName("userid")
-    private long userId;
+    private Long userId;
 
-    private int avail;
+    private Integer avail;
 
-    private int purchased;
+    private Integer purchased;
 
     public EventModel() {
     }
 
-    public EventModel(Long eventId, String eventName, long userId, int avail, int purchased) {
+    public EventModel(Long eventId, String eventName, Long userId, int avail, int purchased) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.userId = userId;
@@ -54,27 +54,27 @@ public class EventModel {
         this.eventName = eventname;
     }
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public int getAvail() {
+    public Integer getAvail() {
         return avail;
     }
 
-    public void setAvail(int avail) {
+    public void setAvail(Integer avail) {
         this.avail = avail;
     }
 
-    public int getPurchased() {
+    public Integer getPurchased() {
         return purchased;
     }
 
-    public void setPurchased(int purchased) {
+    public void setPurchased(Integer purchased) {
         this.purchased = purchased;
     }
 }

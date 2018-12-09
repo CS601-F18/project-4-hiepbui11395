@@ -1,5 +1,6 @@
 package cs601.project4.servlet;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import cs601.project4.entity.Ticket;
 import cs601.project4.entity.User;
@@ -21,8 +22,14 @@ import java.util.List;
 public class UserServlet {
     private UserService userService = UserService.getInstance();
     private TicketService ticketService = TicketService.getInstance();
-    private final String EVENT_SERVICE_URL = Config.getInstance().getProperty("eventUrl");
 
+    Gson gson = new Gson();
+
+    /**
+     * Handle request to create user
+     * @param jsonRequest
+     * @return
+     */
     @POST
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -39,9 +46,9 @@ public class UserServlet {
                     if (id == null) {
                         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
                     } else {
-                        UserModel result = new UserModel();
-                        result.setUserId(id);
-                        return Response.ok(result).build();
+                        userModel = new UserModel();
+                        userModel.setUserId(id);
+                        return Response.ok().entity(gson.toJson(userModel)).build();
                     }
                 }
             }
@@ -49,6 +56,11 @@ public class UserServlet {
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
+    /**
+     * Handle request to get user from specific user id
+     * @param userId
+     * @return
+     */
     @GET
     @Path("/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,12 +71,18 @@ public class UserServlet {
             if (user != null) {
                 List<Ticket> ticketList = ticketService.findTicketsByUserId(user.getId());
                 UserModel userModel = new UserModel(user, ticketList);
-                return Response.status(Response.Status.OK).entity(userModel).build();
+                return Response.ok().entity(gson.toJson(userModel)).build();
             }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
+    /**
+     * Handle request to add ticket for specific user
+     * @param userId
+     * @param jsonRequest
+     * @return
+     */
     @POST
     @Path("/{userid}/tickets/add")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -88,6 +106,12 @@ public class UserServlet {
         return Response.status(Response.Status.BAD_REQUEST).entity("").build();
     }
 
+    /**
+     * Handle request to transfer ticket from one user to another
+     * @param userId
+     * @param jsonRequest
+     * @return
+     */
     @POST
     @Path("/{userid}/tickets/transfer")
     @Consumes(MediaType.APPLICATION_JSON)

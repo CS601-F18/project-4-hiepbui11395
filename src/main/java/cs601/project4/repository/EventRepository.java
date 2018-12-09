@@ -29,6 +29,10 @@ public class EventRepository {
     private final String SQL_UPDATE = "update `event` set `userId`=?,`name`=?,`numTickets`=?,`numTicketsAvail`=? " +
             "where `id`=?";
 
+    /**
+     * Get all event in DB
+     * @return list of Event entity
+     */
     public List<Event> gets() {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();
@@ -46,6 +50,11 @@ public class EventRepository {
         }
     }
 
+    /**
+     * Add event in DB
+     * @param entity
+     * @return Event entity or null if can not add
+     */
     public Event create(Event entity) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();
@@ -79,7 +88,6 @@ public class EventRepository {
      *
      * @param entity
      * @param numTickets
-     * @throws SQLException
      */
     public void updateAvailableTicket(Event entity, int numTickets) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
@@ -97,6 +105,11 @@ public class EventRepository {
         }
     }
 
+    /**
+     * Find event in db by id
+     * @param id
+     * @return event entity or null
+     */
     public Event findById(long id) {
         BasicDataSource dataSource = ConnectionUtil.getMyConnection();
         try (Connection connection = dataSource.getConnection();

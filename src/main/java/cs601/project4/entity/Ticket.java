@@ -3,6 +3,9 @@ package cs601.project4.entity;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Entity model for Ticket
+ */
 public class Ticket {
     private Long id;
     private long eventId;

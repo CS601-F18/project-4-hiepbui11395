@@ -9,6 +9,7 @@ import cs601.project4.utils.Utils;
 import org.eclipse.jetty.http.HttpStatus;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import utils.repository.TicketRepository;
 import utils.repository.UserRepository;
@@ -49,7 +50,7 @@ public class UserServiceTest {
     public void createUser_SameUsername_get400(){
         JsonObject request = new JsonObject();
         request.addProperty("username","userTest");
-        HttpUtils.callPostRequest(USER_SERVICE_URL, "/create",
+        HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
@@ -60,9 +61,10 @@ public class UserServiceTest {
     public void getUser_CorrectId_get200(){
         JsonObject request = new JsonObject();
         request.addProperty("username","userTest");
-        Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, "/create",
+        Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
         response = HttpUtils.callGetRequest(USER_SERVICE_URL,
                 String.format(UserServicePath.GET, userModel.getUserId()));
         Assert.assertEquals(response.getStatus(), HttpStatus.OK_200);
@@ -74,7 +76,8 @@ public class UserServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, "/create",
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Incorrect userId
         response = HttpUtils.callGetRequest(USER_SERVICE_URL,
@@ -88,16 +91,13 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getUser_InvalidId_get400(){
-    }
-
-    @Test
     public void addTicket_Valid_get200(){
         JsonObject request = new JsonObject();
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
         request = new JsonObject();
         request.addProperty("eventid",1);
         request.addProperty("tickets", 10);
@@ -114,7 +114,8 @@ public class UserServiceTest {
         request.addProperty("username","userTest");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel = response.readEntity(UserModel.class);
+        UserModel userModel = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //No eventid field
         request = new JsonObject();
@@ -148,13 +149,15 @@ public class UserServiceTest {
         request.addProperty("username","userTest1");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel1 = response.readEntity(UserModel.class);
+        UserModel userModel1 = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //UserTo
         request.addProperty("username","userTest2");
         response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel2 = response.readEntity(UserModel.class);
+        UserModel userModel2 = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create tickets user1
         request = new JsonObject();
@@ -184,13 +187,15 @@ public class UserServiceTest {
         request.addProperty("username","userTest1");
         Response response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel1 = response.readEntity(UserModel.class);
+        UserModel userModel1 = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //UserTo
         request.addProperty("username","userTest2");
         response = HttpUtils.callPostRequest(USER_SERVICE_URL, UserServicePath.CREATE,
                 Utils.gson.toJson(request));
-        UserModel userModel2 = response.readEntity(UserModel.class);
+        UserModel userModel2 = Utils.parseJsonToObject(
+                response.readEntity(String.class), UserModel.class);
 
         //Create tickets user1
         request = new JsonObject();
@@ -241,7 +246,7 @@ public class UserServiceTest {
         Assert.assertEquals(response.getStatus(), HttpStatus.BAD_REQUEST_400);
     }
 
-    @After
+    @Before
     public void cleanTable(){
         userRepository.deleteAll();
         ticketRepository.deleteAll();

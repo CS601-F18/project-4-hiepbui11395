@@ -3,6 +3,9 @@ package cs601.project4.entity;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Entity model for User
+ */
 public class User {
     private Long id;
     private String username;

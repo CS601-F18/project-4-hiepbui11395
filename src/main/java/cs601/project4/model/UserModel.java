@@ -1,6 +1,7 @@
 package cs601.project4.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import cs601.project4.entity.Ticket;
 import cs601.project4.entity.User;
@@ -11,7 +12,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserModel {
     @SerializedName("userid")
-    private long userId;
+    private Long userId;
 
     private String username;
 
@@ -22,7 +23,7 @@ public class UserModel {
     public UserModel() {
     }
 
-    public UserModel(long userId, String username, List<TicketModel> tickets) {
+    public UserModel(Long userId, String username, List<TicketModel> tickets) {
         this.userId = userId;
         this.username = username;
         this.tickets = tickets;
@@ -35,11 +36,11 @@ public class UserModel {
         tickets.forEach(t -> this.tickets.add(new TicketModel(t)));
     }
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
